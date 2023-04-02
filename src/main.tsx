@@ -1,23 +1,35 @@
-import React from 'react'
+import React, {lazy, Suspense} from 'react'
 import ReactDOM from 'react-dom/client'
 import {
     createBrowserRouter,
     RouterProvider,
 } from "react-router-dom";
-import GameroomPage from './routes/GameroomPage'
 import './index.css'
 import ErrorPage from "./layout/ErrorPage";
-import HomePage from "./routes/HomePage";
+import LoadingPage from "./layout/LoadingPage";
+import BlankPage from "./layout/BlankPage";
+import FallbackProvider from "./composables/FallbackProvider";
+
+const HomePage = lazy(() => import("./routes/HomePage"))
+const GameroomPage = lazy(() => import("./routes/GameroomPage"))
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <HomePage/>,
+        element: (
+            <FallbackProvider>
+                <HomePage/>
+            </FallbackProvider>
+        ),
         errorElement: <ErrorPage />,
     },
     {
         path: "/:gameroomId",
-        element: <GameroomPage/>,
+        element: (
+            <FallbackProvider>
+                <GameroomPage/>
+            </FallbackProvider>
+        ),
         errorElement: <ErrorPage />,
     },
 ]);
