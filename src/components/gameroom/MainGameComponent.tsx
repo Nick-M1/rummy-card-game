@@ -11,7 +11,8 @@ import {BeatLoader} from "react-spinners";
 import CompletedTriplesModal from "./CompletedTriplesModal";
 import toast from "react-hot-toast";
 import {toastOptionsCustom} from "../../utils/toast-options-custom";
-import HeaderComponent from "../HeaderComponent";
+import HeaderComponent from "../../layout/HeaderComponent";
+import StartGamePage from "../../layout/StartGamePage";
 
 
 const STARTING_CARD_NUMBER = 10
@@ -108,15 +109,8 @@ export default function MainGameComponent({ user }: Props) {
 
 
     if (typeof gamestate == 'undefined')
-        return (
-            <div>
-                <h1>GAME NOT CREATED YET</h1>
+        return <StartGamePage user={user} text='Game not created yet' buttonText='Start Game' buttonHandler={startGameHandler}/>
 
-                <button onClick={startGameHandler}>
-                    | START GAME |
-                </button>
-            </div>
-        )
 
     const joinGameHandler = async () => {
         const playerCards = gamestate.newCardsPile.splice(0, STARTING_CARD_NUMBER)
@@ -140,11 +134,8 @@ export default function MainGameComponent({ user }: Props) {
     }
 
     if (!gamestate.playerHands.hasOwnProperty(user.uid))
-        return (
-            <button onClick={joinGameHandler}>
-                | JOIN GAME |
-            </button>
-        )
+        return <StartGamePage user={user} text='Would you like to join this game' buttonText='Join Game' buttonHandler={joinGameHandler}/>
+
 
 
     const currentRound = gamestate.round % gamestate.numberOfPlayers

@@ -2,7 +2,7 @@ import useAuthState from "../hooks/useAuthState";
 import {auth} from "../firebase";
 import MainGameComponent from "../components/gameroom/MainGameComponent";
 import {Toaster} from "react-hot-toast";
-import LoadingPage from "../components/LoadingPage";
+import LoadingPage from "../layout/LoadingPage";
 
 
 export default function GameroomPage() {

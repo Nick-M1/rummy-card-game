@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import GameroomPage from './routes/GameroomPage'
 import './index.css'
-import ErrorPage from "./components/ErrorPage";
+import ErrorPage from "./layout/ErrorPage";
 import HomePage from "./routes/HomePage";
 
 const router = createBrowserRouter([
