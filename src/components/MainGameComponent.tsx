@@ -236,9 +236,11 @@ export default function MainGameComponent({ user }: Props) {
     return (
         <div className='px-2 bg-neutral-800 w-[100dvw] h-[100dvh] md:w-full text-gray-300'>
             <div className='flex items-center space-x-2 w-full py-2'>
+                <img src='/brand-logo.png' alt='logo' className='w-8'/>
+                <h1 className='flex-grow text-xl md:text-2xl font-semibold'>Rummy Card Game</h1>
+
+                <h1 className=''>You are Player {gamestate.playerInfo[user.uid].index}</h1>
                 <img src={user.photoURL || undefined} alt='profile' className='w-8 rounded-full'/>
-                <h1 className='text-xl font-semibold flex-grow'>You are Player {gamestate.playerInfo[user.uid].index}</h1>
-                <h1 className='ml-auto'>Rummy Card Game</h1>
             </div>
 
             <div className='flex justify-between space-x-5 py-2 border-b border-gray-600'>
