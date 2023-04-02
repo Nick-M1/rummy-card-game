@@ -27,7 +27,7 @@ export default function SigninPage() {
                 <div>
                     <img
                         className="mx-auto h-12 w-auto"
-                        src="/brand-logo.svg"
+                        src="/brand-logo.png"
                         alt="Website logo"
                     />
                     <h2 className="mt-6 text-center text-3xl font-bold text-gray-200">
@@ -112,11 +112,11 @@ export default function SigninPage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-x-4">
-                        <button onClick={() => signInWithProvider(googleProvider)} className="btn-primary px-0 btn-bouncy flex justify-center bg-blue-500 hover:bg-blue-700 focus:ring-blue-700">
+                        <button onClick={() => signInWithProvider(googleProvider)} className="btn-primary px-0 py-2 btn-bouncy flex justify-center bg-blue-500 hover:bg-blue-700 focus:ring-blue-700">
                             <BsGoogle size={18} className="mr-2 mt-0.5" />
                             <span className="sr-only">Continue with</span> Google
                         </button>
-                        <button onClick={() => signInWithProvider(facebookProvider)} className="bg-black hover:bg-gray-700 flex justify-center btn-bouncy btn-primary px-0 hover:ring-slate-700 focus:ring-slate-700 border border-gray-700">
+                        <button onClick={() => signInWithProvider(facebookProvider)} className="bg-black hover:bg-gray-700 flex justify-center btn-bouncy btn-primary px-0 py-2 hover:ring-slate-700 focus:ring-slate-700 border border-gray-700">
                             <BsFacebook size={23} className="mr-2" />
                             <span className="sr-only">Continue with</span> Facebook
                         </button>
