@@ -16,7 +16,9 @@ type GameType = {
 
     newCardsPile: Card[]
     discardPile: Card[]
-    triplesCreated: Map<number, Card>[]
+    triplesCreated: {
+        [key: string]: Card[]
+    },
 
     playerInfo: {
         [key: string]: {

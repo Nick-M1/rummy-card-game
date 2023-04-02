@@ -8,6 +8,9 @@ import {User} from "firebase/auth";
 import {useLocation} from "react-router-dom";
 import PlayerHand from "./PlayerHand";
 import {BeatLoader} from "react-spinners";
+import CompletedTriplesModal from "./CompletedTriplesModal";
+import toast from "react-hot-toast";
+import {toastOptionsCustom} from "../utils/toast-options-custom";
 
 
 const STARTING_CARD_NUMBER = 10
@@ -27,7 +30,30 @@ export default function MainGameComponent({ user }: Props) {
     const gameroomId = useLocation().pathname.slice(1)
 
     const [selectorMode, setSelectorMode] = useState<SelectorModeEnum>(SelectorModeEnum.NONE)
+    useEffect(() => {
+        switch (selectorMode) {
+            case SelectorModeEnum.NONE:
+                toast.dismiss('selector-mode')
+                break;
+
+            case SelectorModeEnum.TRIPLE_SELECTOR:
+                toast('Select at least 3 cards from your hand and test for a triple', { ...toastOptionsCustom, id: 'selector-mode', duration: 100_000 })
+                break;
+
+            case SelectorModeEnum.COMPLETE_OTHER_TRIPLE:
+                toast('Select a card from your hand and attempt to add to the already created triples', { ...toastOptionsCustom, id: 'selector-mode', duration: 100_000 })
+                break;
+
+            case SelectorModeEnum.DISCARD_CARD:
+                toast('Select a card from your hand to discard (this will end your turn)', { ...toastOptionsCustom, id: 'selector-mode', duration: 100_000 })
+                break;
+        }
+    }, [selectorMode])
+
     const [selectTripleList, setSelectTripleList] = useState<Card[]>([])
+
+    const [completedTriplesModalOpen, setCompletedTriplesModalOpen] = useState(false)
+    const [completedTripleHolder, setCompletedTripleHolder] = useState<Card[]>([])
 
     const [gamestate, setGamestate] = useState<GameType>()
 
@@ -188,7 +214,6 @@ export default function MainGameComponent({ user }: Props) {
         if (!checkTriples(selectTripleList))
             return
 
-
         for (const card of selectTripleList) {
             await updateDoc(doc(db, "games", gameroomId), {
                 [`playerHands.${user.uid}`]: arrayRemove(card),
@@ -196,8 +221,9 @@ export default function MainGameComponent({ user }: Props) {
             })
         }
 
+        const sortedTriple = selectTripleList.sort((a, b) => a.ranking - b.ranking)
         await updateDoc(doc(db, "games", gameroomId), {
-            triplesCreated: arrayUnion({...selectTripleList.sort((a, b) => a.ranking - b.ranking)}),
+            [`triplesCreated.${sortedTriple[0].id}`]: sortedTriple
         })
     }
 
@@ -215,6 +241,19 @@ export default function MainGameComponent({ user }: Props) {
         })
     }
 
+    const completeAlreadyCreatedTriple = async (card: Card) => {
+        if (!checkTriples([...completedTripleHolder, card]))
+            return
+
+        await updateDoc(doc(db, "games", gameroomId), {
+            [`playerHands.${user.uid}`]: arrayRemove(card),
+        })
+
+        await updateDoc(doc(db, "games", gameroomId), {
+            [`triplesCreated.${completedTripleHolder[0].id}`]: arrayUnion(card)
+        })
+    }
+
     const cardOnclickHandler = (card: Card) => {
         switch (selectorMode) {
             case SelectorModeEnum.NONE:
@@ -225,6 +264,7 @@ export default function MainGameComponent({ user }: Props) {
                 break;
 
             case SelectorModeEnum.COMPLETE_OTHER_TRIPLE:
+                completeAlreadyCreatedTriple(card)
                 break;
 
             case SelectorModeEnum.DISCARD_CARD:
@@ -234,98 +274,118 @@ export default function MainGameComponent({ user }: Props) {
     }
 
     return (
-        <div className='px-2 bg-neutral-800 w-[100dvw] h-[100dvh] md:w-full text-gray-300'>
-            <div className='flex items-center space-x-2 w-full py-2'>
-                <img src='/brand-logo.png' alt='logo' className='w-8'/>
-                <h1 className='flex-grow text-xl md:text-2xl font-semibold'>Rummy Card Game</h1>
+        <>
+            <div className='px-2 bg-neutral-800 w-[100dvw] h-[100dvh] md:w-full text-gray-300'>
+                <div className='flex items-center space-x-2 w-full py-2'>
+                    <img src='/brand-logo.png' alt='logo' className='w-8'/>
+                    <h1 className='flex-grow text-xl md:text-2xl font-semibold'>Rummy Card Game</h1>
 
-                <h1 className=''>You are Player {gamestate.playerInfo[user.uid].index}</h1>
-                <img src={user.photoURL || undefined} alt='profile' className='w-8 rounded-full'/>
-            </div>
+                    <h1 className=''>You are Player {gamestate.playerInfo[user.uid].index}</h1>
+                    <img src={user.photoURL || undefined} alt='profile' className='w-8 rounded-full'/>
+                </div>
 
-            <div className='flex justify-between space-x-5 py-2 border-b border-gray-600'>
-                { Object.values(gamestate.playerInfo)
-                    .sort((p1, p2) => p1.index - p2.index)
-                    .map(playerInfo => (
-                        <div className={`flex space-x-2 flex-grow rounded-md p-3 m-0.5 shadow-sm text-sm outline smooth-transition ${currentRound === playerInfo.index ? 'outline-3 outline-teal-600 bg-white/20 text-gray-100' : 'outline-1 outline-gray-600 bg-white/10 text-gray-300'}`}>
-                            <img src={playerInfo.displayImage || undefined} alt='profile' className='w-10 h-10 rounded-full'/>
-                            <p>
-                                <span className='italic'>Player {playerInfo.index}</span>
-                                <br/>
-                                {playerInfo.displayName}
-                            </p>
-                        </div>
-                ))}
-            </div>
-
-            { currentRound === gamestate.playerInfo[user.uid].index
-                ? (
-                    <>
-                        {/*<button onClick={startGameHandler}>*/}
-                        {/*    | START GAME |*/}
-                        {/*</button>*/}
-                        {/*<br/>*/}
-
-                        <h3 className='pt-2'>Your turn...</h3>
-
-                        { gamestate.cardPickedUpThisRound
-                            ? (
-                                <>
-                                    <div className='pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-gray-600'>
-                                        <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)} className='btn-secondary'>
-                                            Select a triple
-                                        </button>
-                                        <button onClick={() => setSelectorMode(SelectorModeEnum.COMPLETE_OTHER_TRIPLE)} className='btn-secondary'>
-                                            Complete an already completed triple
-                                        </button>
-                                        <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)} className='btn-secondary'>
-                                            Discard a card
-                                        </button>
-                                    </div>
-
+                <div className='flex justify-between space-x-5 py-2 border-b border-gray-600'>
+                    { Object.values(gamestate.playerInfo)
+                        .sort((p1, p2) => p1.index - p2.index)
+                        .map(playerInfo => (
+                            <div key={playerInfo.index} className={`flex space-x-2 flex-grow rounded-md p-3 m-0.5 shadow-sm text-sm outline smooth-transition ${currentRound === playerInfo.index ? 'outline-3 outline-teal-600 bg-white/20 text-gray-100' : 'outline-1 outline-gray-600 bg-white/10 text-gray-300'}`}>
+                                <img src={playerInfo.displayImage || undefined} alt='profile' className='w-10 h-10 rounded-full'/>
+                                <p>
+                                    <span className='italic'>Player {playerInfo.index}</span>
                                     <br/>
-                                    <button onClick={() => removeTriple()}>
-                                        | CHECK SELECTED TRIPLES |
-                                    </button>
-                                </>
-                            ) : (
-                                <div className='pt-1 pb-4 grid grid-cols-2 gap-5 border-b border-gray-600'>
-                                    <button onClick={takeCardFromNewPileHandler} className='btn-primary'>
-                                        Take a new card from the unseen cards pile
-                                    </button>
+                                    {playerInfo.displayName}
+                                </p>
+                            </div>
+                    ))}
+                </div>
 
-                                    { gamestate.discardPile.length != 0 && (
-                                        <button onClick={takeCardFromDiscardPileHandler} className='btn-primary'>
-                                            Take a card from the discard pile
+                { currentRound === gamestate.playerInfo[user.uid].index
+                    ? (
+                        <>
+                            {/*<button onClick={startGameHandler}>*/}
+                            {/*    | START GAME |*/}
+                            {/*</button>*/}
+                            {/*<br/>*/}
+
+                            <button onClick={() => setCompletedTriplesModalOpen(true)}>
+                                | OPEN TRIPLES MODAL |
+                            </button>
+                            <br/>
+
+                            <h3 className='pt-2'>Your turn...</h3>
+
+                            { gamestate.cardPickedUpThisRound
+                                ? (
+                                    <>
+                                        <div className='pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-gray-600'>
+                                            <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)} className={`btn-secondary ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && 'outline outline-4 outline-teal-600'}`}>
+                                                Select a triple
+                                            </button>
+                                            <button onClick={() => setCompletedTriplesModalOpen(true)} className={`btn-secondary ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && 'outline outline-4 outline-teal-600'}`}>
+                                                Complete an already completed triple
+                                            </button>
+                                            <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)} className={`btn-secondary ${selectorMode == SelectorModeEnum.DISCARD_CARD && 'outline outline-4 outline-teal-600'}`}>
+                                                Discard a card
+                                            </button>
+                                        </div>
+
+                                        <br/>
+                                        <button onClick={() => removeTriple()}>
+                                            | CHECK SELECTED TRIPLES |
                                         </button>
-                                    ) }
-                                </div>
-                        )}
-                    </>
+                                    </>
+                                ) : (
+                                    <div className='pt-1 pb-4 grid grid-cols-2 gap-5 border-b border-gray-600'>
+                                        <button onClick={takeCardFromNewPileHandler} className='btn-primary'>
+                                            Take a new card from the unseen cards pile
+                                        </button>
 
-                ) : (
-                    <div className='pt-8 flex flex-col justify-center items-center text-3xl'>
-                        Player {currentRound}'s turn
-                        <BeatLoader color='teal' size='30' className='py-5'/>
-                    </div>
-                )
-            }
+                                        { gamestate.discardPile.length != 0 && (
+                                            <button onClick={takeCardFromDiscardPileHandler} className='btn-primary'>
+                                                Take a card from the discard pile
+                                            </button>
+                                        ) }
+                                    </div>
+                            )}
+                        </>
 
-            {/* DISCARD PILE */}
-            <div className='absolute right-2 bottom-52 rounded-md border-t border-l border-gray-600 p-1.5'>
-                <h3 className='pb-1.5'>Discard Pile</h3>
-                <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile' className='h-40 flex-shrink-0'/>
+                    ) : (
+                        <div className='pt-8 flex flex-col justify-center items-center text-3xl'>
+                            Player {currentRound}'s turn
+                            <BeatLoader color='teal' size='30' className='py-5'/>
+                        </div>
+                    )
+                }
+
+                {/* DISCARD PILE */}
+                <div className='absolute right-2 bottom-52 rounded-md border-t border-l border-gray-600 p-1.5'>
+                    <h3 className='pb-1.5'>Discard Pile</h3>
+                    <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile' className='h-40 flex-shrink-0'/>
+                </div>
+
+                {/* PLAYER'S HAND */}
+                <div className='fixed bottom-0 border-t border-gray-600 w-full pr-2 pb-1'>
+                    <h3 className='py-1'>Your hand</h3>
+                    <PlayerHand
+                        cards={gamestate?.playerHands[user.uid].sort((c1, c2) => c1.ranking - c2.ranking)}
+                        selectTripleListIds={selectTripleList.map(c => c.id)}
+                        cardOnclickHandler={cardOnclickHandler}
+                    />
+                </div>
             </div>
 
-            {/* PLAYER'S HAND */}
-            <div className='fixed bottom-0 border-t border-gray-600 w-full pr-2 pb-1'>
-                <h3 className='py-1'>Your hand</h3>
-                <PlayerHand
-                    cards={gamestate?.playerHands[user.uid].sort((c1, c2) => c1.ranking - c2.ranking)}
-                    selectTripleListIds={selectTripleList.map(c => c.id)}
-                    cardOnclickHandler={cardOnclickHandler}
-                />
-            </div>
-        </div>
+            <CompletedTriplesModal
+                modalOpen={completedTriplesModalOpen}
+                setModalOpen={setCompletedTriplesModalOpen}
+                triplesCreated={gamestate.triplesCreated}
+
+                canAddToTriples={currentRound === gamestate.playerInfo[user.uid].index && gamestate.cardPickedUpThisRound}
+                handler={(cards: Card[]) => {
+                    setCompletedTripleHolder(cards)
+                    setSelectorMode(SelectorModeEnum.COMPLETE_OTHER_TRIPLE)
+                    setCompletedTriplesModalOpen(false)
+                }}
+            />
+        </>
     )
 }

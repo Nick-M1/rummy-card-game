@@ -1,6 +1,7 @@
 import useAuthState from "../hooks/useAuthState";
 import {auth} from "../firebase";
 import MainGameComponent from "../components/MainGameComponent";
+import {Toaster} from "react-hot-toast";
 
 
 export default function GameroomPage() {
@@ -26,6 +27,9 @@ export default function GameroomPage() {
     }
 
     return (
-        <MainGameComponent user={user}/>
+        <>
+            <Toaster/>
+            <MainGameComponent user={user}/>
+        </>
     )
 }
