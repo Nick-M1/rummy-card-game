@@ -11,6 +11,7 @@ import {BeatLoader} from "react-spinners";
 import CompletedTriplesModal from "./CompletedTriplesModal";
 import toast from "react-hot-toast";
 import {toastOptionsCustom} from "../../utils/toast-options-custom";
+import HeaderComponent from "../HeaderComponent";
 
 
 const STARTING_CARD_NUMBER = 10
@@ -25,6 +26,8 @@ enum SelectorModeEnum {
 type Props = {
     user: User
 }
+
+
 
 export default function MainGameComponent({ user }: Props) {
     const gameroomId = useLocation().pathname.slice(1)
@@ -275,31 +278,27 @@ export default function MainGameComponent({ user }: Props) {
 
     return (
         <>
-            <div className='px-2 bg-neutral-800 w-[100dvw] h-[100dvh] md:w-full text-gray-300'>
-                <div className='flex items-center space-x-2 w-full py-2'>
-                    <img src='/brand-logo.png' alt='logo' className='w-8'/>
-                    <h1 className='flex-grow text-xl md:text-2xl font-semibold'>Rummy Card Game</h1>
-
-                    <h1 className=''>You are Player {gamestate.playerInfo[user.uid].index}</h1>
-                    <img src={user.photoURL || undefined} alt='profile' className='w-8 rounded-full'/>
-                </div>
+            <div className='px-2 bg-neutral-800 w-screen h-screen md:w-full text-gray-300'>
+                <HeaderComponent userImage={user.photoURL} displaynameText={`You are Player ${gamestate.playerInfo[user.uid].index}`}/>
 
                 <div className='flex justify-between space-x-5 py-2 border-b border-gray-600'>
-                    { Object.values(gamestate.playerInfo)
+                    {Object.values(gamestate.playerInfo)
                         .sort((p1, p2) => p1.index - p2.index)
                         .map(playerInfo => (
-                            <div key={playerInfo.index} className={`flex space-x-2 flex-grow rounded-md p-3 m-0.5 shadow-sm text-sm outline smooth-transition ${currentRound === playerInfo.index ? 'outline-3 outline-teal-600 bg-white/20 text-gray-100' : 'outline-1 outline-gray-600 bg-white/10 text-gray-300'}`}>
-                                <img src={playerInfo.displayImage || undefined} alt='profile' className='w-10 h-10 rounded-full'/>
+                            <div key={playerInfo.index}
+                                 className={`flex space-x-2 flex-grow rounded-md p-3 m-0.5 shadow-sm text-sm outline smooth-transition ${currentRound === playerInfo.index ? 'outline-3 outline-teal-600 bg-white/20 text-gray-100' : 'outline-1 outline-gray-600 bg-white/10 text-gray-300'}`}>
+                                <img src={playerInfo.displayImage || undefined} alt='profile'
+                                     className='w-10 h-10 rounded-full'/>
                                 <p>
                                     <span className='italic'>Player {playerInfo.index}</span>
                                     <br/>
                                     {playerInfo.displayName}
                                 </p>
                             </div>
-                    ))}
+                        ))}
                 </div>
 
-                { currentRound === gamestate.playerInfo[user.uid].index
+                {currentRound === gamestate.playerInfo[user.uid].index
                     ? (
                         <>
                             {/*<button onClick={startGameHandler}>*/}
@@ -314,17 +313,20 @@ export default function MainGameComponent({ user }: Props) {
 
                             <h3 className='pt-2'>Your turn...</h3>
 
-                            { gamestate.cardPickedUpThisRound
+                            {gamestate.cardPickedUpThisRound
                                 ? (
                                     <>
                                         <div className='pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-gray-600'>
-                                            <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)} className={`btn-secondary ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && 'outline outline-4 outline-teal-600'}`}>
+                                            <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)}
+                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && 'outline outline-4 outline-teal-600'}`}>
                                                 Select a triple
                                             </button>
-                                            <button onClick={() => setCompletedTriplesModalOpen(true)} className={`btn-secondary ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && 'outline outline-4 outline-teal-600'}`}>
+                                            <button onClick={() => setCompletedTriplesModalOpen(true)}
+                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && 'outline outline-4 outline-teal-600'}`}>
                                                 Complete an already completed triple
                                             </button>
-                                            <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)} className={`btn-secondary ${selectorMode == SelectorModeEnum.DISCARD_CARD && 'outline outline-4 outline-teal-600'}`}>
+                                            <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)}
+                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.DISCARD_CARD && 'outline outline-4 outline-teal-600'}`}>
                                                 Discard a card
                                             </button>
                                         </div>
@@ -340,13 +342,13 @@ export default function MainGameComponent({ user }: Props) {
                                             Take a new card from the unseen cards pile
                                         </button>
 
-                                        { gamestate.discardPile.length != 0 && (
+                                        {gamestate.discardPile.length != 0 && (
                                             <button onClick={takeCardFromDiscardPileHandler} className='btn-primary'>
                                                 Take a card from the discard pile
                                             </button>
-                                        ) }
+                                        )}
                                     </div>
-                            )}
+                                )}
                         </>
 
                     ) : (
@@ -360,7 +362,8 @@ export default function MainGameComponent({ user }: Props) {
                 {/* DISCARD PILE */}
                 <div className='absolute right-2 bottom-52 rounded-md border-t border-l border-gray-600 p-1.5'>
                     <h3 className='pb-1.5'>Discard Pile</h3>
-                    <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile' className='h-40 flex-shrink-0'/>
+                    <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile'
+                         className='h-40 flex-shrink-0'/>
                 </div>
 
                 {/* PLAYER'S HAND */}
