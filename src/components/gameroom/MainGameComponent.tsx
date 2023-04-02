@@ -278,10 +278,12 @@ export default function MainGameComponent({ user }: Props) {
 
     return (
         <>
-            <div className='px-2 bg-neutral-800 w-screen h-screen md:w-full text-gray-300'>
-                <HeaderComponent userImage={user.photoURL} displaynameText={`You are Player ${gamestate.playerInfo[user.uid].index}`}/>
+            <div className='px-2 bg-neutral-800 w-screen h-screen text-gray-300'>
+                <HeaderComponent displaynameText={`You are Player ${gamestate.playerInfo[user.uid].index}`}>
+                    <img src={user.photoURL || '/unknown-profilepic.png'} alt="profile" className="w-8 rounded-full"/>
+                </HeaderComponent>
 
-                <div className='flex justify-between space-x-5 py-2 border-b border-gray-600'>
+                <div className='flex justify-between space-x-5 py-2 border-b border-neutral-600'>
                     {Object.values(gamestate.playerInfo)
                         .sort((p1, p2) => p1.index - p2.index)
                         .map(playerInfo => (
@@ -316,7 +318,7 @@ export default function MainGameComponent({ user }: Props) {
                             {gamestate.cardPickedUpThisRound
                                 ? (
                                     <>
-                                        <div className='pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-gray-600'>
+                                        <div className='pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-neutral-600'>
                                             <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)}
                                                     className={`btn-secondary ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && 'outline outline-4 outline-teal-600'}`}>
                                                 Select a triple
@@ -337,7 +339,7 @@ export default function MainGameComponent({ user }: Props) {
                                         </button>
                                     </>
                                 ) : (
-                                    <div className='pt-1 pb-4 grid grid-cols-2 gap-5 border-b border-gray-600'>
+                                    <div className='pt-1 pb-4 grid grid-cols-2 gap-5 border-b border-neutral-600'>
                                         <button onClick={takeCardFromNewPileHandler} className='btn-primary'>
                                             Take a new card from the unseen cards pile
                                         </button>
@@ -360,14 +362,14 @@ export default function MainGameComponent({ user }: Props) {
                 }
 
                 {/* DISCARD PILE */}
-                <div className='absolute right-2 bottom-52 rounded-md border-t border-l border-gray-600 p-1.5'>
+                <div className='absolute right-2 bottom-52 rounded-md border-t border-l border-neutral-600 p-1.5'>
                     <h3 className='pb-1.5'>Discard Pile</h3>
                     <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile'
                          className='h-40 flex-shrink-0'/>
                 </div>
 
                 {/* PLAYER'S HAND */}
-                <div className='fixed bottom-0 border-t border-gray-600 w-full pr-2 pb-1'>
+                <div className='fixed bottom-0 border-t border-neutral-600 w-full pr-2 pb-1'>
                     <h3 className='py-1'>Your hand</h3>
                     <PlayerHand
                         cards={gamestate?.playerHands[user.uid].sort((c1, c2) => c1.ranking - c2.ranking)}
