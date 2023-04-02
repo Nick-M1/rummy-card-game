@@ -22,11 +22,11 @@ export default function SigninPage() {
     }
 
     return (
-        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-neutral-900 h-screen-withmobile w-full">
+        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-neutral-900 h-[100dvh] w-full">
             <div className="w-full max-w-md space-y-8">
                 <div>
                     <img
-                        className="mx-auto h-12 w-auto"
+                        className="mx-auto h-24 w-auto"
                         src="/brand-logo.png"
                         alt="Website logo"
                     />
