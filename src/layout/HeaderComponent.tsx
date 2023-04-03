@@ -11,7 +11,7 @@ export default function HeaderComponent({ children, displaynameText }: Props) {
             <img src="/brand-logo.png" alt="logo" className="w-8"/>
             <h1 className="flex-grow text-xl md:text-2xl font-semibold">Rummy Card Game</h1>
 
-            <h1 className="">{ displaynameText }</h1>
+            <h1 className="text-right">{ displaynameText }</h1>
             { children }
         </div>
     )
