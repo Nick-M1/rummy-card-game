@@ -5,7 +5,7 @@ import shuffleArray from "../../utils/shuffle-array";
 import {db} from "../../firebase";
 import { onSnapshot, query, collection, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, doc, increment } from "@firebase/firestore"
 import {User} from "firebase/auth";
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import PlayerHand from "./PlayerHand";
 import {BeatLoader} from "react-spinners";
 import CompletedTriplesModal from "./CompletedTriplesModal";
@@ -13,8 +13,8 @@ import toast from "react-hot-toast";
 import {toastOptionsCustom} from "../../utils/toast-options-custom";
 import HeaderComponent from "../../layout/HeaderComponent";
 import StartGamePage from "../../layout/StartGamePage";
-import ModalCustom from "../shared/ModalCustom";
 import GameoverModal from "./GameoverModal";
+import LoadingPage from "../../layout/LoadingPage";
 
 
 const STARTING_CARD_NUMBER = 10
@@ -33,7 +33,9 @@ type Props = {
 
 
 export default function MainGameComponent({ user }: Props) {
-    const gameroomId = useLocation().pathname.slice(1)
+    const { gameroomId } = useParams()
+    if (typeof gameroomId == 'undefined')
+        return <LoadingPage/>
 
     const [selectorMode, setSelectorMode] = useState<SelectorModeEnum>(SelectorModeEnum.NONE)
     useEffect(() => {
