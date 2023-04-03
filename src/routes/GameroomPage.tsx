@@ -6,6 +6,7 @@ import LoadingPage from "../layout/LoadingPage";
 import {Navigate} from "react-router-dom";
 
 
+// Change to 'export function Component()'
 export default function GameroomPage() {
     const [user, userLoading, userError] = useAuthState(auth)
 
