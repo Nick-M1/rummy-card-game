@@ -1,6 +1,6 @@
 import {ALL_CARDS} from "../../utils/all-cards";
 import Card from "./Card";
-import {useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import shuffleArray from "../../utils/shuffle-array";
 import {db} from "../../firebase";
 import { onSnapshot, query, collection, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, doc, increment } from "@firebase/firestore"
@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 import {toastOptionsCustom} from "../../utils/toast-options-custom";
 import HeaderComponent from "../../layout/HeaderComponent";
 import StartGamePage from "../../layout/StartGamePage";
+import ModalCustom from "../shared/ModalCustom";
+import GameoverModal from "./GameoverModal";
 
 
 const STARTING_CARD_NUMBER = 10
@@ -55,13 +57,12 @@ export default function MainGameComponent({ user }: Props) {
     }, [selectorMode])
 
     const [selectTripleList, setSelectTripleList] = useState<Card[]>([])
-
     const [completedTriplesModalOpen, setCompletedTriplesModalOpen] = useState(false)
     const [completedTripleHolder, setCompletedTripleHolder] = useState<Card[]>([])
 
     const [gamestate, setGamestate] = useState<GameType>()
+    const [gameoverPopup, setGameoverPopup] = useState(false)
 
-    // FILTER FOR CHATS
     useEffect(() => {
         const chatroomUnsub = onSnapshot(
             doc(db, "games", gameroomId),
@@ -75,6 +76,25 @@ export default function MainGameComponent({ user }: Props) {
         return () => chatroomUnsub()
     }, [])
 
+    const winnerCheck = async (userId: string, hand: Card[]) => {
+        if (hand.length != 0)
+            return
+
+        await updateDoc(doc(db, "games", gameroomId), {
+            winner: userId
+        })
+    }
+
+    useEffect(() => {
+        if (typeof gamestate != 'undefined') {
+            if (gamestate.winner == null)
+                winnerCheck(user.uid, gamestate.playerHands[user.uid])
+            else
+                setGameoverPopup(true)
+        }
+
+    }, [gamestate])
+
 
     const startGameHandler = async () => {
         const shuffledCards = shuffleArray(ALL_CARDS)
@@ -84,6 +104,7 @@ export default function MainGameComponent({ user }: Props) {
             numberOfPlayers: 1,
             round: 0,
             cardPickedUpThisRound: false,
+            winner: null,
 
             newCardsPile: shuffledCards,
             discardPile: [],
@@ -136,11 +157,8 @@ export default function MainGameComponent({ user }: Props) {
     if (!gamestate.playerHands.hasOwnProperty(user.uid))
         return <StartGamePage user={user} text='Would you like to join this game' buttonText='Join Game' buttonHandler={joinGameHandler}/>
 
-
-
     const currentRound = gamestate.round % gamestate.numberOfPlayers
     const hasATripleAlready = gamestate.playerHasTriple[user.uid]
-
 
     const takeCardFromNewPileHandler = async () => {
         const newCard = gamestate.newCardsPile.at(0)
@@ -232,7 +250,6 @@ export default function MainGameComponent({ user }: Props) {
             const tmp = [...prevState]
             tmp.splice(indexFound, 1)
             return tmp
-
         })
     }
 
@@ -344,7 +361,7 @@ export default function MainGameComponent({ user }: Props) {
                     ) : (
                         <div className='pt-8 flex flex-col justify-center items-center text-3xl'>
                             Player {currentRound}'s turn
-                            <BeatLoader color='teal' size='30' className='py-5'/>
+                            <BeatLoader color='teal' size='30px' className='py-5'/>
                         </div>
                     )
                 }
@@ -383,6 +400,13 @@ export default function MainGameComponent({ user }: Props) {
                     setSelectorMode(SelectorModeEnum.COMPLETE_OTHER_TRIPLE)
                     setCompletedTriplesModalOpen(false)
                 }}
+            />
+
+            <GameoverModal
+                modalOpen={gameoverPopup}
+                setModalOpen={setGameoverPopup}
+                isWinner={gamestate.winner === user.uid}
+                winnersDisplayname={gamestate.winner && gamestate.playerInfo[gamestate.winner].displayName}
             />
         </>
     )

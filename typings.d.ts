@@ -13,6 +13,7 @@ type GameType = {
     numberOfPlayers: number
     round: number
     cardPickedUpThisRound: boolean
+    winner: string | null     // null = No winner, otherwise is the winner's user.uid
 
     newCardsPile: Card[]
     discardPile: Card[]
