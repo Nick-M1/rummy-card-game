@@ -15,7 +15,7 @@ function App() {
             <Suspense fallback={<BlankPage/>}>
                 <Routes>
                     <Route path='/' element={<HomePage/>} errorElement={<ErrorPage/>}/>
-                    <Route path='/*' element={<GameroomPage/>} errorElement={<ErrorPage/>}/>
+                    <Route path='/:gameroomId' element={<GameroomPage/>} errorElement={<ErrorPage/>}/>
                 </Routes>
             </Suspense>
         </BrowserRouter>

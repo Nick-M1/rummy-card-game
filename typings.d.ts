@@ -9,7 +9,7 @@ type Card = {
     value: number
 }
 
-type GameType = {
+type GameDBType = {
     numberOfPlayers: number
     round: number
     cardPickedUpThisRound: boolean
@@ -35,5 +35,19 @@ type GameType = {
 
     playerHasTriple: {
         [key: string]: boolean
+    }
+}
+
+type ResultsDBType = {
+    playerInfo: {
+        [key: string]: {
+            index: number
+            displayName: string
+            displayImage: string
+        }
+    }
+
+    rounds: {
+        [key: string]: number[]
     }
 }

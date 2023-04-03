@@ -60,35 +60,41 @@ export default function MainGameComponent({ user }: Props) {
     const [completedTriplesModalOpen, setCompletedTriplesModalOpen] = useState(false)
     const [completedTripleHolder, setCompletedTripleHolder] = useState<Card[]>([])
 
-    const [gamestate, setGamestate] = useState<GameType>()
+    const [gamestate, setGamestate] = useState<GameDBType>()
     const [gameoverPopup, setGameoverPopup] = useState(false)
 
     useEffect(() => {
         const chatroomUnsub = onSnapshot(
             doc(db, "games", gameroomId),
             (doc) => {
-                const docData = doc.data() as GameType | undefined
+                const docData = doc.data() as GameDBType | undefined
                 if (docData != undefined) {
-                    setGamestate(docData as GameType)
+                    setGamestate(docData as GameDBType)
                 }
             });
 
         return () => chatroomUnsub()
     }, [])
 
-    const winnerCheck = async (userId: string, hand: Card[]) => {
+    const winnerCheck = async (userId: string, hand: Card[], playerHands: {[p: string]: Card[]}) => {
         if (hand.length != 0)
             return
 
         await updateDoc(doc(db, "games", gameroomId), {
             winner: userId
         })
+
+        for (const [playerId, playerHand] of Object.entries(playerHands)) {
+            await updateDoc(doc(db, "results", gameroomId), {
+                [`rounds.${playerId}`]: arrayUnion( playerHand.map(c => c.ranking).reduce((num1, num2) => num1 + num2, 0) )
+            })
+        }
     }
 
     useEffect(() => {
         if (typeof gamestate != 'undefined') {
             if (gamestate.winner == null)
-                winnerCheck(user.uid, gamestate.playerHands[user.uid])
+                winnerCheck(user.uid, gamestate.playerHands[user.uid], gamestate.playerHands)
             else
                 setGameoverPopup(true)
         }
@@ -126,6 +132,20 @@ export default function MainGameComponent({ user }: Props) {
                 [user.uid]: false,
             },
         })
+
+        await setDoc(doc(db, "results", gameroomId), {
+            playerInfo: {
+                [user.uid]: {
+                    index: 0,
+                    displayName: user.displayName,
+                    displayImage: user.photoURL
+                },
+            },
+
+            rounds: {
+                [user.uid]: []
+            }
+        })
     }
 
 
@@ -152,6 +172,15 @@ export default function MainGameComponent({ user }: Props) {
                 newCardsPile: arrayRemove(card),
             })
         }
+
+        await updateDoc(doc(db, "results", gameroomId), {
+            [`playerInfo.${user.uid}`]: {
+                index: gamestate.numberOfPlayers,
+                displayName: user.displayName,
+                displayImage: user.photoURL
+            },
+            [`rounds.${user.uid}`]: [],
+        })
     }
 
     if (!gamestate.playerHands.hasOwnProperty(user.uid))
