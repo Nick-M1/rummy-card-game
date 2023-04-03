@@ -7,6 +7,7 @@ import BlankPage from "./layout/BlankPage";
 
 const HomePage = lazy(() => import("./routes/HomePage"))
 const GameroomPage = lazy(() => import("./routes/GameroomPage"))
+const LeaderboardRoute = lazy(() => import("./routes/LeaderboardRoute"))
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
                 <Routes>
                     <Route path='/' element={<HomePage/>} errorElement={<ErrorPage/>}/>
                     <Route path='/:gameroomId' element={<GameroomPage/>} errorElement={<ErrorPage/>}/>
+                    <Route path='/:gameroomId/leaderboard' element={<LeaderboardRoute/>} errorElement={<ErrorPage/>}/>
                 </Routes>
             </Suspense>
         </BrowserRouter>

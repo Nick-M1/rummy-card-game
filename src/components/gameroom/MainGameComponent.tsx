@@ -28,14 +28,12 @@ enum SelectorModeEnum {
 
 type Props = {
     user: User
+    gameroomId: string
 }
 
 
 
-export default function MainGameComponent({ user }: Props) {
-    const { gameroomId } = useParams()
-    if (typeof gameroomId == 'undefined')
-        return <LoadingPage/>
+export default function MainGameComponent({ user, gameroomId }: Props) {
 
     const [selectorMode, setSelectorMode] = useState<SelectorModeEnum>(SelectorModeEnum.NONE)
     useEffect(() => {
@@ -135,19 +133,25 @@ export default function MainGameComponent({ user }: Props) {
             },
         })
 
-        await setDoc(doc(db, "results", gameroomId), {
-            playerInfo: {
-                [user.uid]: {
-                    index: 0,
-                    displayName: user.displayName,
-                    displayImage: user.photoURL
+        const resultsDbExists = await getDoc(doc(db, "results", gameroomId)).then(res => res.exists())
+        if (!resultsDbExists) {
+            await setDoc(doc(db, "results", gameroomId), {
+                playerInfo: {
+                    [user.uid]: {
+                        index: 0,
+                        displayName: user.displayName,
+                        displayImage: user.photoURL
+                    },
                 },
-            },
 
-            rounds: {
-                [user.uid]: []
-            }
-        })
+                rounds: {
+                    [user.uid]: []
+                }
+            })
+        }
+
+
+
     }
 
 
@@ -436,6 +440,7 @@ export default function MainGameComponent({ user }: Props) {
             <GameoverModal
                 modalOpen={gameoverPopup}
                 setModalOpen={setGameoverPopup}
+                gameroomId={gameroomId}
                 isWinner={gamestate.winner === user.uid}
                 winnersDisplayname={gamestate.winner && gamestate.playerInfo[gamestate.winner].displayName}
             />
