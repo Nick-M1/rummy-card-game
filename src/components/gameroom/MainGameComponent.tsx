@@ -139,6 +139,7 @@ export default function MainGameComponent({ user }: Props) {
 
 
     const currentRound = gamestate.round % gamestate.numberOfPlayers
+    const hasATripleAlready = gamestate.playerHasTriple[user.uid]
 
 
     const takeCardFromNewPileHandler = async () => {
@@ -299,11 +300,6 @@ export default function MainGameComponent({ user }: Props) {
                             {/*</button>*/}
                             {/*<br/>*/}
 
-                            <button onClick={() => setCompletedTriplesModalOpen(true)}>
-                                | OPEN TRIPLES MODAL |
-                            </button>
-                            <br/>
-
                             <h3 className='pt-2'>Your turn...</h3>
 
                             {gamestate.cardPickedUpThisRound
@@ -315,7 +311,8 @@ export default function MainGameComponent({ user }: Props) {
                                                 Select a triple
                                             </button>
                                             <button onClick={() => setCompletedTriplesModalOpen(true)}
-                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && 'outline outline-4 outline-teal-600'}`}>
+                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && 'outline outline-4 outline-teal-600'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
+                                                    disabled={!hasATripleAlready}>
                                                 Complete an already completed triple
                                             </button>
                                             <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)}
@@ -352,6 +349,11 @@ export default function MainGameComponent({ user }: Props) {
                     )
                 }
 
+                {/* Triples Modal button */}
+                <button onClick={() => setCompletedTriplesModalOpen(true)} className={`absolute bottom-52 left-2 btn-tertiary ${Object.values(gamestate.triplesCreated).length == 0 && 'hidden'}`}>
+                    View Completed Triples
+                </button>
+
                 {/* DISCARD PILE */}
                 <div className='absolute right-2 bottom-52 rounded-md border-t border-l border-neutral-600 p-1.5'>
                     <h3 className='pb-1.5'>Discard Pile</h3>
@@ -375,7 +377,7 @@ export default function MainGameComponent({ user }: Props) {
                 setModalOpen={setCompletedTriplesModalOpen}
                 triplesCreated={gamestate.triplesCreated}
 
-                canAddToTriples={currentRound === gamestate.playerInfo[user.uid].index && gamestate.cardPickedUpThisRound}
+                canAddToTriples={currentRound === gamestate.playerInfo[user.uid].index && gamestate.cardPickedUpThisRound && hasATripleAlready}
                 handler={(cards: Card[]) => {
                     setCompletedTripleHolder(cards)
                     setSelectorMode(SelectorModeEnum.COMPLETE_OTHER_TRIPLE)

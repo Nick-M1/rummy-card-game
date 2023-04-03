@@ -1,40 +1,4 @@
-export const SUITES = ['clubs', 'diamonds', 'hearts', 'spades']
-
-export const RANKS = [
-    { href: 'ace', ranking: 1, value: 1 },
-    { href: '2', ranking: 2, value: 2 },
-    { href: '3', ranking: 3, value: 3 },
-    { href: '4', ranking: 4, value: 4 },
-    { href: '5', ranking: 5, value: 5 },
-    { href: '6', ranking: 6, value: 6 },
-    { href: '7', ranking: 7, value: 7 },
-    { href: '8', ranking: 8, value: 8 },
-    { href: '9', ranking: 9, value: 9 },
-    { href: '10', ranking: 10, value: 10 },
-    { href: 'jack', ranking: 11, value: 10 },
-    { href: 'king', ranking: 12, value: 10 },
-    { href: 'queen', ranking: 13, value: 10 },
-]
-
-export const EXTRA_CARDS  = ['joker_black', 'joker_red']
-
-// export const ALL_CARDS: Card[] = [
-//         ...SUITES.flatMap(suite =>
-//         RANKS.map(rank => {
-//                 return {
-//                     suite,
-//                     rank: rank.href,
-//                     name: `${rank.href} ${suite}`,
-//                     img: `cards-front/${suite}_${rank.href}.svg`,
-//
-//                     ranking: rank.ranking,
-//                     value: rank.value
-//                 } as Card
-//             }
-//         )
-//     ),
-//     // ...EXTRA_CARDS
-// ]
+export const sortCardsFunction = (card1: Card, card2: Card) => card1.ranking - card2.ranking
 
 export const ALL_CARDS: Card[] = [
     { id: "1-ace clubs",  "suite":"clubs", "rank":"ace",    "name":"ace clubs","img":"cards-front/clubs_ace.svg","ranking":1,"value":1 },

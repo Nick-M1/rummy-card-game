@@ -18,12 +18,12 @@ export default function StartGamePage({ user, text, buttonText, buttonHandler }:
                 { text }
             </h1>
 
-            <div className='mx-auto w-fit pb-11 grid grid-cols-3 space-x-2'>
-                <Link to='/' className='btn-secondary rounded-md'>
+            <div className='mx-auto w-fit pb-[2.6rem] md:pb-[3.1rem] grid grid-cols-3 space-x-2'>
+                <Link to='/' className='btn-tertiary flex items-center h-12'>
                     Go Back
                 </Link>
 
-                <button onClick={buttonHandler} className='btn-primary col-span-2'>
+                <button onClick={buttonHandler} className='btn-primary col-span-2 flex justify-center items-center h-12'>
                     { buttonText }
                 </button>
             </div>

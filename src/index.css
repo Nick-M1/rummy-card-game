@@ -4,10 +4,13 @@
 
 @layer components {
     .btn-primary {
-        @apply rounded-md border border-transparent drop-shadow-sm shadow-sm bg-blue-700 py-2 md:py-4 px-5 text-center font-medium text-white tracking-wide shadow-sm hover:bg-indigo-700 focus:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-out
+        @apply rounded-md border border-transparent drop-shadow-md shadow-lg bg-blue-700 py-2 md:py-4 px-5 text-center font-medium text-white tracking-wide shadow-sm hover:bg-indigo-700 focus:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-out
     }
     .btn-secondary {
         @apply justify-center text-sm rounded-xl border border-gray-200 drop-shadow-sm shadow-sm bg-blue-100 py-3 px-3 text-center font-medium text-blue-900 tracking-wide hover:bg-blue-200 hover:text-blue-600 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-out
+    }
+    .btn-tertiary {
+        @apply rounded-md bg-white/80 border border-gray-200 drop-shadow-md py-2 md:py-4 px-5 text-center font-medium text-black tracking-wide hover:bg-gray-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:z-[1] transition duration-300 ease-out
     }
 
     .smooth-transition {
