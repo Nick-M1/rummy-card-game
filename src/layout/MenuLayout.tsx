@@ -1,7 +1,7 @@
 import {User} from "firebase/auth";
-import {ReactNode} from "react";
+import {lazy, ReactNode} from "react";
 import HeaderComponent from "./HeaderComponent";
-import UserprofileDropdown from "../components/authentication/UserprofileDropdown";
+const UserprofileDropdown = lazy(() => import("../components/authentication/UserprofileDropdown"))
 
 type Props = {
     user: User
