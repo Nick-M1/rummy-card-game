@@ -1,4 +1,4 @@
-export function smoothScrollWithHighlight(elementId: string, block: ScrollLogicalPosition ) {
+export function smoothScrollWithHighlight(elementId: string, scrollPosition: ScrollLogicalPosition ) {
     const element = document.getElementById( elementId )
 
     if (element == null)
@@ -7,7 +7,8 @@ export function smoothScrollWithHighlight(elementId: string, block: ScrollLogica
     // Scroll
     element.scrollIntoView({
         behavior: 'smooth',
-        block: block
+        block: scrollPosition,
+        inline: scrollPosition
     })
 
     // Highlight

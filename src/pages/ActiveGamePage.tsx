@@ -400,18 +400,18 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                             {gamestate.cardPickedUpThisRound
                                 ? (
                                     <>
-                                        <div className='px-1 pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-neutral-600'>
+                                        <div className='px-1 pt-2 pb-4 grid grid-cols-3 gap-5 border-b border-neutral-600'>
                                             <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)}
-                                                    className={`button-cyan ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && '-translate-y-3'}`}>
+                                                    className={`button-cyan ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && '-translate-y-4 shadow-blue-500/50'}`}>
                                                 Select a triple
                                             </button>
                                             <button onClick={() => setCompletedTriplesModalOpen(true)}
-                                                    className={`button-pink ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && '-translate-y-3'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
+                                                    className={`button-pink ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && '-translate-y-4'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
                                                     disabled={!hasATripleAlready}>
                                                 Complete an already completed triple
                                             </button>
                                             <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)}
-                                                    className={`button-yellow ${selectorMode == SelectorModeEnum.DISCARD_CARD && '-translate-y-3'}`}>
+                                                    className={`button-yellow ${selectorMode == SelectorModeEnum.DISCARD_CARD && '-translate-y-4 shadow-orange-500/50'}`}>
                                                 Discard a card
                                             </button>
                                         </div>
@@ -440,7 +440,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 }
 
                 {/* Triples Modal button */}
-                <button onClick={() => setCompletedTriplesModalOpen(true)} className={`absolute bottom-52 left-2 button-white ${Object.values(gamestate.triplesCreated).length == 0 && 'hidden'}`}>
+                <button onClick={() => setCompletedTriplesModalOpen(true)} className={`absolute bottom-56 left-3 button-white ${Object.values(gamestate.triplesCreated).length == 0 && 'hidden'}`}>
                     View Completed Triples
                 </button>
 

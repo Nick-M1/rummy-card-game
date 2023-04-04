@@ -23,7 +23,7 @@
         @apply py-3 px-5 rounded-md text-center font-medium tracking-wide text-white drop-shadow-md shadow-lg border active:outline-none active:ring-2 active:ring-offset-2 active:z-[1] btn-bouncy transition duration-300 ease-out
     }
     .button-white {
-        @apply button-base text-black bg-white/80 border-gray-200 shadow-white/10 hover:bg-gray-100 hover:text-blue-600 active:bg-white active:border-white active:ring-blue-500
+        @apply button-base text-black bg-white/95 border-gray-200 shadow-white/10 hover:bg-gray-100 hover:text-blue-600 active:bg-white active:border-white active:ring-blue-500
     }
     .button-yellow {
         @apply button-base text-black bg-yellow-500/80 border-yellow-500 shadow-orange-500/25 hover:bg-yellow-600/80 active:text-gray-300 active:bg-yellow-700/80 active:border-yellow-700/80 active:ring-yellow-500
