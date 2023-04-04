@@ -37,6 +37,9 @@
     .button-cyan {
         @apply button-base text-black bg-cyan-500/80 border-blue-500 shadow-cyan-500/25 hover:bg-cyan-600/80 active:text-gray-300 active:bg-cyan-700/80 active:border-cyan-700/80 active:ring-blue-500
     }
+    .button-blue {
+        @apply button-base text-neutral-300 bg-blue-600/80 border-blue-600 shadow-blue-500/25 hover:bg-blue-700/80 active:text-gray-200 active:bg-blue-800/80 active:border-blue-800/80 active:ring-blue-500
+    }
     .button-indigo {
         @apply button-base text-neutral-300 bg-indigo-500/80 border-indigo-500 shadow-indigo-500/25 hover:bg-indigo-600/80 active:text-gray-200 active:bg-indigo-700/80 active:border-indigo-700/80 active:ring-indigo-500
     }

@@ -33,7 +33,7 @@ export default function LeaderboardPage({ user, gameroomId, resultsData }: Props
             <div className='py-8 md:mx-8 px-2 flex justify-between'>
                 <div/>
                 <h1 className='text-3xl font-semibold'>🏆 Leaderboard</h1>
-                <button onClick={newRoundHandler} className='btn-tertiary py-2.5'>Start New Match</button>
+                <button onClick={newRoundHandler} className='button-orange py-2.5'>Start <br className='sm:hidden'/> New Match</button>
             </div>
 
             <div className="md:mx-8 relative overflow-x-auto shadow-md rounded-lg scrollbar">
