@@ -181,7 +181,7 @@ export default function PlayerHand({ cards, selectTripleListIds, cardOnclickHand
 
 
     return (
-        <div className='flex overflow-x-auto scrollbar'>
+        <div className='flex pt-3 overflow-x-auto scrollbar'>
             { cards.map(card => (
                 <Card
                     key={card.id}

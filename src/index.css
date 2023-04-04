@@ -3,14 +3,45 @@
 @tailwind utilities;
 
 @layer components {
+    /* Older buttons */
     .btn-primary {
-        @apply rounded-md border border-transparent drop-shadow-md shadow-lg bg-blue-700 py-2 md:py-4 px-5 text-center font-medium text-white tracking-wide shadow-sm hover:bg-indigo-700 focus:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-out
+        @apply rounded-md border border-transparent drop-shadow-md shadow-lg bg-blue-700 py-2 md:py-4 px-5 text-center font-medium text-white tracking-wide hover:bg-indigo-700 focus:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300 ease-out
     }
     .btn-secondary {
         @apply justify-center text-sm rounded-xl border border-gray-200 drop-shadow-sm shadow-sm bg-blue-100 py-3 px-3 text-center font-medium text-blue-900 tracking-wide hover:bg-blue-200 hover:text-blue-600 focus:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-out
     }
     .btn-tertiary {
         @apply rounded-md bg-white/80 border border-gray-200 drop-shadow-md py-2 md:py-4 px-5 text-center font-medium text-black tracking-wide hover:bg-gray-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:z-[1] transition duration-300 ease-out
+    }
+
+    /* Newer buttons */
+    .btn-bouncy {
+        @apply active:scale-105
+    }
+
+    .button-base {
+        @apply py-3 px-5 rounded-md text-center font-medium tracking-wide text-white drop-shadow-md shadow-lg border active:outline-none active:ring-2 active:ring-offset-2 active:z-[1] btn-bouncy transition duration-300 ease-out
+    }
+    .button-white {
+        @apply button-base text-black bg-white/80 border-gray-200 shadow-white/10 hover:bg-gray-100 hover:text-blue-600 active:bg-white active:border-white active:ring-blue-500
+    }
+    .button-yellow {
+        @apply button-base text-black bg-yellow-500/80 border-yellow-500 shadow-orange-500/25 hover:bg-yellow-600/80 active:text-gray-300 active:bg-yellow-700/80 active:border-yellow-700/80 active:ring-yellow-500
+    }
+    .button-orange {
+        @apply button-base text-black bg-orange-500/80 border-orange-500 shadow-orange-500/25 hover:bg-orange-600/80 active:text-gray-300 active:bg-orange-700/80 active:border-orange-700/80 active:ring-orange-500
+    }
+    .button-lime {
+        @apply button-base text-black bg-lime-500/80 border-lime-500 shadow-lime-500/25 hover:bg-lime-600/80 active:text-gray-300 active:bg-lime-700/80 active:border-lime-700/80 active:ring-lime-500
+    }
+    .button-cyan {
+        @apply button-base text-black bg-cyan-500/80 border-blue-500 shadow-cyan-500/25 hover:bg-cyan-600/80 active:text-gray-300 active:bg-cyan-700/80 active:border-cyan-700/80 active:ring-blue-500
+    }
+    .button-indigo {
+        @apply button-base text-neutral-300 bg-indigo-500/80 border-indigo-500 shadow-indigo-500/25 hover:bg-indigo-600/80 active:text-gray-200 active:bg-indigo-700/80 active:border-indigo-700/80 active:ring-indigo-500
+    }
+    .button-pink {
+        @apply button-base text-black bg-pink-500/80 border-pink-500 shadow-pink-500/25 hover:bg-pink-600/80 active:text-gray-300 active:bg-pink-700/80 active:border-pink-700/80 active:ring-pink-500
     }
 
     .smooth-transition {

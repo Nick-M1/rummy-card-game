@@ -1,9 +1,9 @@
 import {ALL_CARDS} from "../utils/all-cards";
 import Card from "../components/gameroom/Card";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import shuffleArray from "../utils/shuffle-array";
 import {db} from "../firebase";
-import { onSnapshot, query, collection, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, doc, increment } from "@firebase/firestore"
+import { onSnapshot, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, doc, increment } from "@firebase/firestore"
 import {User} from "firebase/auth";
 import PlayerHand from "../components/gameroom/PlayerHand";
 import {BeatLoader} from "react-spinners";
@@ -13,6 +13,33 @@ import {toastOptionsCustom} from "../utils/toast-options-custom";
 import StartGamePage from "./StartGamePage";
 import GameoverModal from "../components/gameroom/GameoverModal";
 import {smoothScrollWithHighlight} from "../utils/smooth-scroll";
+import {customToast} from "../utils/custom-toasts/toast-with-images";
+
+
+const toastWithCards = (id: string, text: string, icon: string, images: string[], isValid: boolean, submitHandler: () => void) => {
+    const children = (
+        <div className='flex space-x-2'>
+            <div>{ icon }</div>
+            <div>
+                { text }
+                <div className='flex pt-2 space-x-2 items-center'>
+                    { images.map((image, index) =>
+                        <img key={index} src={image} alt={image} className='w-16 border border-black/50 rounded-sm'/>
+                    )}
+                    { images.length != 0 &&
+                        <>
+                            <img src={ isValid ? '/shared-icons/valid-icon.svg' : '/shared-icons/invalid-icon.svg' } alt='checker' className='w-6 h-6'/>
+                            <div className='flex-grow'/>
+                            <button onClick={submitHandler} className={`ml-auto btn-secondary ${!isValid && 'hidden'}`}>Submit Triple</button>
+                        </>
+                    }
+                </div>
+            </div>
+        </div>
+    )
+
+    return customToast(id, children, 100_000)
+}
 
 
 const STARTING_CARD_NUMBER = 10
@@ -32,6 +59,15 @@ type Props = {
 export default function ActiveGamePage({ user, gameroomId }: Props) {
 
     const [selectorMode, setSelectorMode] = useState<SelectorModeEnum>(SelectorModeEnum.NONE)
+
+    const [selectTripleList, setSelectTripleList] = useState<Card[]>([])
+
+    const [completedTriplesModalOpen, setCompletedTriplesModalOpen] = useState(false)
+    const [completedTripleHolder, setCompletedTripleHolder] = useState<Card[]>([])
+
+    const [gamestate, setGamestate] = useState<GameDBType>()
+    const [gameoverPopup, setGameoverPopup] = useState(false)
+
     useEffect(() => {
         switch (selectorMode) {
             case SelectorModeEnum.NONE:
@@ -39,25 +75,18 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 break;
 
             case SelectorModeEnum.TRIPLE_SELECTOR:
-                toast('Select at least 3 cards from your hand and test for a triple', { ...toastOptionsCustom, id: 'selector-mode', duration: 100_000 })
+                toastWithCards('selector-mode', 'Select at least 3 cards from your hand and test for a triple', '🤷‍♀️', selectTripleList.map(c => c.img), checkTriples(selectTripleList), () => removeTriple())
                 break;
 
             case SelectorModeEnum.COMPLETE_OTHER_TRIPLE:
-                toast('Select a card from your hand and attempt to add to the already created triples', { ...toastOptionsCustom, id: 'selector-mode', duration: 100_000 })
+                toastWithCards('selector-mode', 'Select a card from your hand and attempt to add to the already created triple', '🤷‍♀️', completedTripleHolder.map(c => c.img), checkTriples(selectTripleList), () => {})
                 break;
 
             case SelectorModeEnum.DISCARD_CARD:
-                toast('Select a card from your hand to discard (this will end your turn)', { ...toastOptionsCustom, id: 'selector-mode', duration: 100_000 })
+                toast('Select a card from your hand to discard (this will end your turn)', { ...toastOptionsCustom, icon: '🤷‍♀️', id: 'selector-mode', duration: 100_000 })
                 break;
         }
-    }, [selectorMode])
-
-    const [selectTripleList, setSelectTripleList] = useState<Card[]>([])
-    const [completedTriplesModalOpen, setCompletedTriplesModalOpen] = useState(false)
-    const [completedTripleHolder, setCompletedTripleHolder] = useState<Card[]>([])
-
-    const [gamestate, setGamestate] = useState<GameDBType>()
-    const [gameoverPopup, setGameoverPopup] = useState(false)
+    }, [selectorMode, selectTripleList, completedTripleHolder])
 
     useEffect(() => {
         const chatroomUnsub = onSnapshot(
@@ -207,7 +236,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         })
 
         smoothScrollWithHighlight(`hand-${newCard?.id}`, 'center')
-        toast(`You picked up "${newCard?.name.toUpperCase()}"`, { ...toastOptionsCustom, id: 'new-card' })
+        toast(`You picked up "${newCard?.name.toUpperCase()}"`, { ...toastOptionsCustom, icon: '⬆️', id: 'new-card' })
     }
 
     const takeCardFromDiscardPileHandler = async () => {
@@ -220,7 +249,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         })
 
         smoothScrollWithHighlight(`hand-${newCard?.id}`, 'center')
-        toast(`You picked up "${newCard?.name.toUpperCase()}"`, { ...toastOptionsCustom, id: 'new-card' })
+        toast(`You picked up "${newCard?.name.toUpperCase()}"`, { ...toastOptionsCustom, icon: '⬆️', id: 'new-card' })
     }
 
     const addCardToDiscardPileHandler = async (card: Card) => {
@@ -231,6 +260,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
             discardPile: arrayUnion(card),
         })
 
+        toast(`You discarded "${card.name.toUpperCase()}"`, { ...toastOptionsCustom, icon: '⬇️', id: 'new-card' })
         setSelectorMode(SelectorModeEnum.NONE)
         setSelectTripleList([])
     }
@@ -281,6 +311,8 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         await updateDoc(doc(db, "games", gameroomId), {
             [`triplesCreated.${sortedTriple[0].id}`]: sortedTriple
         })
+
+        setSelectTripleList([])
     }
 
     const selectTripleHandler = (card: Card) => {
@@ -352,40 +384,35 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 {currentRound === gamestate.playerInfo[user.uid].index
                     ? (
                         <>
-                            <h3 className='pt-2'>Your turn...</h3>
+                            <h3 className='py-2'>Your turn...</h3>
 
                             {gamestate.cardPickedUpThisRound
                                 ? (
                                     <>
-                                        <div className='pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-neutral-600'>
+                                        <div className='px-1 pt-1 pb-4 grid grid-cols-3 gap-5 border-b border-neutral-600'>
                                             <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)}
-                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && 'outline outline-4 outline-teal-600'}`}>
+                                                    className={`button-cyan ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && '-translate-y-3'}`}>
                                                 Select a triple
                                             </button>
                                             <button onClick={() => setCompletedTriplesModalOpen(true)}
-                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && 'outline outline-4 outline-teal-600'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
+                                                    className={`button-pink ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && '-translate-y-3'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
                                                     disabled={!hasATripleAlready}>
                                                 Complete an already completed triple
                                             </button>
                                             <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)}
-                                                    className={`btn-secondary ${selectorMode == SelectorModeEnum.DISCARD_CARD && 'outline outline-4 outline-teal-600'}`}>
+                                                    className={`button-yellow ${selectorMode == SelectorModeEnum.DISCARD_CARD && '-translate-y-3'}`}>
                                                 Discard a card
                                             </button>
                                         </div>
-
-                                        <br/>
-                                        <button onClick={() => removeTriple()}>
-                                            | CHECK SELECTED TRIPLES |
-                                        </button>
                                     </>
                                 ) : (
-                                    <div className='pt-1 pb-4 grid grid-cols-2 gap-5 border-b border-neutral-600'>
-                                        <button onClick={takeCardFromNewPileHandler} className='btn-primary'>
+                                    <div className='px-1 pt-1 pb-4 grid grid-cols-2 gap-5 border-b border-neutral-600'>
+                                        <button onClick={takeCardFromNewPileHandler} className='button-lime'>
                                             Take a new card from the unseen cards pile
                                         </button>
 
-                                        {gamestate.discardPile.length != 0 && (
-                                            <button onClick={takeCardFromDiscardPileHandler} className='btn-primary'>
+                                        { gamestate.discardPile.length != 0 && (
+                                            <button onClick={takeCardFromDiscardPileHandler} className='button-orange'>
                                                 Take a card from the discard pile
                                             </button>
                                         )}
@@ -402,20 +429,20 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 }
 
                 {/* Triples Modal button */}
-                <button onClick={() => setCompletedTriplesModalOpen(true)} className={`absolute bottom-52 left-2 btn-tertiary ${Object.values(gamestate.triplesCreated).length == 0 && 'hidden'}`}>
+                <button onClick={() => setCompletedTriplesModalOpen(true)} className={`absolute bottom-52 left-2 button-white ${Object.values(gamestate.triplesCreated).length == 0 && 'hidden'}`}>
                     View Completed Triples
                 </button>
 
                 {/* DISCARD PILE */}
-                <div className='absolute right-2 bottom-52 rounded-md border-t border-l border-neutral-600 p-1.5'>
-                    <h3 className='pb-1.5'>Discard Pile</h3>
+                <div className='absolute right-2 bottom-[13.3rem] rounded-md border-l border-neutral-600 p-2'>
+                    <h3 className='pb-1.5 text-sm'>Discard Pile</h3>
                     <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile'
-                         className='h-40 flex-shrink-0'/>
+                         className='h-32 flex-shrink-0'/>
                 </div>
 
                 {/* PLAYER'S HAND */}
                 <div className='fixed bottom-0 border-t border-neutral-600 w-full pr-2 pb-1'>
-                    <h3 className='py-1'>Your hand</h3>
+                    <h3 className='pt-1'>Your hand</h3>
                     <PlayerHand
                         cards={gamestate?.playerHands[user.uid].sort((c1, c2) => c1.ranking - c2.ranking)}
                         selectTripleListIds={selectTripleList.map(c => c.id)}
