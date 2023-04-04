@@ -147,7 +147,9 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
             })
         }
 
-
+        await updateDoc(doc(db, "users", user.uid), {
+            games: arrayUnion(gameroomId)
+        })
 
     }
 
@@ -183,6 +185,10 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 displayImage: user.photoURL
             },
             [`rounds.${user.uid}`]: [],
+        })
+
+        await updateDoc(doc(db, "users", user.uid), {
+            games: arrayUnion(gameroomId)
         })
     }
 

@@ -19,7 +19,7 @@ const router = createBrowserRouter(
 
             <Route element={<LayoutMain/>} errorElement={<ErrorPage/>}>
                 <Route index lazy={() => import("./routes/HomePage")}/>
-                <Route path='/profileId' lazy={() => import("./routes/ProfileRoute")}/>
+                <Route path='/profile' lazy={() => import("./routes/ProfileRoute")}/>
 
                 <Route path='/:gameroomId' lazy={() => import("./routes/GameroomPage")}/>
                 <Route path='/:gameroomId/leaderboard' lazy={() => import("./routes/LeaderboardRoute")} loader={leaderboardLoader}/>

@@ -24,7 +24,7 @@ type Props = {
 export default function UserprofileDropdown({ user }: Props) {
     const [logoutPopup , setLogoutPopup] = useState(false)
     const userNavigation = [
-        { isButton: false, name: "My Profile",  to: `#`,                                 icon: UserIcon },
+        { isButton: false, name: "My Profile",  to: '/profile',                                 icon: UserIcon },
         { isButton: true,  name: "Logout",      func: () => setLogoutPopup(true),  icon: ArrowRightOnRectangleIcon },
     ];
 
