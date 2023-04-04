@@ -226,12 +226,13 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
     const currentRound = gamestate.round % gamestate.numberOfPlayers
     const hasATripleAlready = gamestate.playerHasTriple[user.uid]
 
-    const takeCardFromNewPileHandler = async () => {
-        const newCard = gamestate.newCardsPile.at(0)
+
+    const takeCardFromDiscardPileHandler = async (index: number) => {
+        const newCard = gamestate.discardPile.at(index)
 
         await updateDoc(doc(db, "games", gameroomId), {
             cardPickedUpThisRound: true,
-            newCardsPile: arrayRemove(newCard),
+            discardPile: arrayRemove(newCard),
             [`playerHands.${user.uid}`]: arrayUnion(newCard),
         })
 
@@ -239,12 +240,17 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         toast(`You picked up "${newCard?.name.toUpperCase()}"`, { ...toastOptionsCustom, icon: '⬆️', id: 'new-card' })
     }
 
-    const takeCardFromDiscardPileHandler = async () => {
-        const newCard = gamestate.discardPile.at(-1)
+    const takeCardFromNewPileHandler = async () => {
+        const newCard = gamestate.newCardsPile.at(0)
+
+        if (typeof newCard == 'undefined') {
+            takeCardFromDiscardPileHandler(1)
+            return
+        }
 
         await updateDoc(doc(db, "games", gameroomId), {
             cardPickedUpThisRound: true,
-            discardPile: arrayRemove(newCard),
+            newCardsPile: arrayRemove(newCard),
             [`playerHands.${user.uid}`]: arrayUnion(newCard),
         })
 
@@ -265,19 +271,28 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         setSelectTripleList([])
     }
 
-    const checkTriplesBySameSuite = (cards: Card[], suite: string): boolean => {
+    const checkTriplesBySameSuite = (cards: Card[], suite: string, numberOfJokers: number): boolean => {
+        let attempts = numberOfJokers
+
         for (const [index, card] of cards.entries()) {
-            if (!(card.suite === suite && (index==0 || card.ranking-1 === cards[index-1].ranking)))
-                return false
+            if ( card.ranking != 25 && (!(card.suite === suite && (index==0 || card.ranking-1 === cards[index-1].ranking)))) {
+                attempts -= 1
+
+                if (attempts < 0 || card.suite !== suite)
+                    return false
+            }
         }
         return true
     }
 
     const checkTriplesBySameRank = (cards: Card[], rank: number): boolean => {
+        if (cards.length > 4)
+            return false
+
         const seenSuites = new Set<string>()
 
         for (const card of cards) {
-            if (card.ranking !== rank || seenSuites.has(card.suite))
+            if ( card.ranking != 25 && (card.ranking !== rank || seenSuites.has(card.suite)))
                 return false
             seenSuites.add(card.suite)
         }
@@ -292,8 +307,10 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         const firstSuite = cards[0].suite
         const firstRank = cards[0].ranking
 
+        const numberOfJokers = cards.map(c => c.ranking).reduce((c1, c2) => c2 == 25 ? c1 + 1 : c1, 0)
+
         // Check suites match or rank match
-        return checkTriplesBySameSuite(sortedCards, firstSuite) || checkTriplesBySameRank(sortedCards, firstRank)
+        return checkTriplesBySameSuite(sortedCards, firstSuite, numberOfJokers) || checkTriplesBySameRank(sortedCards, firstRank)
     }
 
     const removeTriple = async () => {
@@ -405,7 +422,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                                                     className={`button-cyan ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && '-translate-y-4 shadow-blue-500/50'}`}>
                                                 Select a triple
                                             </button>
-                                            <button onClick={() => setCompletedTriplesModalOpen(true)}
+                                            <button onClick={() => { setCompletedTriplesModalOpen(true); setSelectorMode(SelectorModeEnum.NONE) }}
                                                     className={`button-pink ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && '-translate-y-4'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
                                                     disabled={!hasATripleAlready}>
                                                 Complete an already completed triple
@@ -423,7 +440,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                                         </button>
 
                                         { gamestate.discardPile.length != 0 && (
-                                            <button onClick={takeCardFromDiscardPileHandler} className='button-orange'>
+                                            <button onClick={() => takeCardFromDiscardPileHandler(-1)} className='button-orange'>
                                                 Take a card from the discard pile
                                             </button>
                                         )}

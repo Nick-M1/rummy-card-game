@@ -17,23 +17,21 @@ export default function CompletedTriplesModal({ modalOpen, setModalOpen, triples
         <ModalCustom title='Completed Triples' modalOpen={modalOpen} setModalOpen={setModalOpen}>
             <div>
                 { Object.entries(triplesCreated).map(([tripleId, tripleCollection]) => (
-                    <div key={tripleId} className='flex space-x-2 py-3 flex-shrink-0 overflow-y-auto scrollbar'>
-                        <>
-                            { tripleCollection.map(card => (
-                                <div key={card.id}>
-                                    <img src={card.img || undefined} alt='card' className='h-40 flex-shrink-0'/>
-                                </div>
-                            ))}
+                    <div key={tripleId} className='flex space-x-2 py-3 overflow-x-auto scrollbar'>
+                        { tripleCollection.map(card => (
+                            <div key={card.id} className='flex-shrink-0'>
+                                <img src={card.img || undefined} alt='card' className='w-24'/>
+                            </div>
+                        ))}
 
-                            { canAddToTriples &&
-                                <div
-                                    onClick={() => handler(tripleCollection)}
-                                    className='bg-white/10 h-40 w-28 rounded-md flex items-center justify-center text-4xl pb-4 hover:bg-white/20 smooth-transition cursor-pointer'
-                                >
-                                    +
-                                </div>
-                            }
-                        </>
+                        { canAddToTriples &&
+                            <div
+                                onClick={() => handler(tripleCollection)}
+                                className='bg-white/10 w-24 rounded-md flex items-center justify-center text-4xl pb-4 hover:bg-white/20 smooth-transition cursor-pointer'
+                            >
+                                +
+                            </div>
+                        }
                     </div>
                 ))}
             </div>

@@ -13,6 +13,6 @@ export function smoothScrollWithHighlight(elementId: string, scrollPosition: Scr
 
     // Highlight
     const originalClassname = element.className
-    element.className = originalClassname + ' bg-blue-900/50'
+    element.className = originalClassname + ' bg-cyan-500/50'
     setTimeout(() => element.className = originalClassname, 1000)
 }
