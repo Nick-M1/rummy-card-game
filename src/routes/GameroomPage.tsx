@@ -7,7 +7,7 @@ import {Navigate, useParams} from "react-router-dom";
 
 
 // Change to 'export function Component()'
-export default function GameroomPage() {
+export function Component() {
     const [user, userLoading, userError] = useAuthState(auth)
     const { gameroomId } = useParams()
 

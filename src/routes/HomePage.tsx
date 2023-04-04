@@ -5,8 +5,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingPage from "../layout/LoadingPage";
 import MenuLayout from "../layout/MenuLayout";
 
-// Change to 'export function Component()'
-export default function HomePage() {
+export function Component() {
     const navigate = useNavigate();
     const [user, userLoading, userError] = useAuthState(auth)
 

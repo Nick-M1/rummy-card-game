@@ -1,14 +1,14 @@
 import {User} from "firebase/auth";
 import HeaderComponent from "../../layout/HeaderComponent";
 import UserprofileDropdown from "../authentication/UserprofileDropdown";
-import {deleteDoc, doc, getDoc} from "@firebase/firestore";
+import {deleteDoc, doc} from "@firebase/firestore";
 import {db} from "../../firebase";
-import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
     user: User
     gameroomId: string
+    resultsData: ResultsDBType
 }
 
 function range(total: number) {
@@ -18,23 +18,13 @@ function range(total: number) {
 
 const MIN_NUMBER_OF_ROUNDS = 4
 
-export default function LeaderboardPage({ user, gameroomId }: Props) {
-    const [resultsData, setResultsData] = useState<ResultsDBType>()
+export default function LeaderboardPage({ user, gameroomId, resultsData }: Props) {
     const navigator = useNavigate()
-
-    useEffect(() => {
-        getDoc(doc(db, "results", gameroomId))
-            .then(doc => setResultsData(doc.data() as ResultsDBType))
-    }, [])
 
     const newRoundHandler = () => {
         deleteDoc(doc(db, "games", gameroomId))
         navigator(`/${gameroomId}`)
     }
-
-
-    if (typeof resultsData == 'undefined')
-        return <div>Data undefined :(</div>
 
     const numberOfRounds = Math.max(resultsData.rounds[user.uid].length, MIN_NUMBER_OF_ROUNDS)
 
