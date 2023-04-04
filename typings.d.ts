@@ -51,3 +51,8 @@ type ResultsDBType = {
         [key: string]: number[]
     }
 }
+
+type UserDBType = {
+    id: string
+    games: string[]
+}

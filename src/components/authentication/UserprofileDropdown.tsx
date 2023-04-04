@@ -5,6 +5,7 @@ import {ArrowRightOnRectangleIcon, UserIcon} from "@heroicons/react/24/outline";
 import {auth} from "../../firebase";
 import {Menu, Transition} from "@headlessui/react";
 import PopupCustom from "../shared/PopupCustom";
+import {Link} from "react-router-dom";
 
 function menuitemClassname({ active, disabled }: { active: boolean, disabled: boolean }) {
     return classNames(
@@ -23,7 +24,7 @@ type Props = {
 export default function UserprofileDropdown({ user }: Props) {
     const [logoutPopup , setLogoutPopup] = useState(false)
     const userNavigation = [
-        { isButton: false, name: "My Profile",  to: ``,                                  icon: UserIcon },
+        { isButton: false, name: "My Profile",  to: `#`,                                 icon: UserIcon },
         { isButton: true,  name: "Logout",      func: () => setLogoutPopup(true),  icon: ArrowRightOnRectangleIcon },
     ];
 
@@ -73,13 +74,13 @@ export default function UserprofileDropdown({ user }: Props) {
                                             <span>{item.name}</span>
                                         </button>
                                     ) : (
-                                        <a
-                                            href={item.to!}
+                                        <Link
+                                            to={item.to!}
                                             className={`${menuitemClassname(itemrenderPropArgs)} flex`}
                                         >
                                             <item.icon className='h-5 w-5 mr-2.5'/>
                                             <span>{item.name}</span>
-                                        </a>
+                                        </Link>
                                     )
                                 )}
                             </Menu.Item>

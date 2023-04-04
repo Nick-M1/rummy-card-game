@@ -1,17 +1,15 @@
-import {User} from "firebase/auth";
 import MenuLayout from "../layout/MenuLayout";
 import {Link} from "react-router-dom";
 
 type Props = {
-    user: User
     text: string
     buttonText: string
     buttonHandler: () => Promise<void>
 }
 
-export default function StartGamePage({ user, text, buttonText, buttonHandler }: Props) {
+export default function StartGamePage({ text, buttonText, buttonHandler }: Props) {
     return (
-        <MenuLayout user={user}>
+        <MenuLayout>
             <h1 className='mx-auto w-fit py-3 text-2xl font-semibold tracking-wide'>
                 { text }
             </h1>

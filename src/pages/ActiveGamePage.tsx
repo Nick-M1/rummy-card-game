@@ -153,7 +153,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
 
 
     if (typeof gamestate == 'undefined')
-        return <StartGamePage user={user} text='Game not created yet' buttonText='Start Game' buttonHandler={startGameHandler}/>
+        return <StartGamePage text='Game not created yet' buttonText='Start Game' buttonHandler={startGameHandler}/>
 
 
     const joinGameHandler = async () => {
@@ -187,7 +187,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
     }
 
     if (!gamestate.playerHands.hasOwnProperty(user.uid))
-        return <StartGamePage user={user} text='Would you like to join this game' buttonText='Join Game' buttonHandler={joinGameHandler}/>
+        return <StartGamePage text='Would you like to join this game' buttonText='Join Game' buttonHandler={joinGameHandler}/>
 
     const currentRound = gamestate.round % gamestate.numberOfPlayers
     const hasATripleAlready = gamestate.playerHasTriple[user.uid]
