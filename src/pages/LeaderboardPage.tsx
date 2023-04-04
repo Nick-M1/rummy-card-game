@@ -63,7 +63,7 @@ export default function LeaderboardPage({ user, gameroomId, resultsData }: Props
                             const playerScoresDisplay = playerScores.length >= numberOfRounds ? playerScores : [...playerScores, ...Array(numberOfRounds - playerScores.length).fill('-')]
 
                             return (
-                                <tr key={playerId} className={`group border-b border-gray-800 smooth-transition ${playerId == user.uid && 'bg-yellow-500/5'}`}>
+                                <tr key={playerId} className={`group border-b border-gray-800 smooth-transition ${playerId == user.uid && 'bg-pink-400/20'}`}>
                                     <th scope="row"  className="flex items-center px-6 py-4 text-gray-300 font-semibold whitespace-nowrap">
                                         <img src={playerInfo.displayImage} alt='student profile' className='w-10 h-10 rounded-full shadow-sm mr-3'/>
                                         { playerInfo.displayName }
