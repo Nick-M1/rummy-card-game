@@ -4,7 +4,7 @@ export default function LoadingPage() {
             <h2 className="text-5xl text-white font-semibold text-center tracking-wider animate-pulse">
                 Loading...
             </h2>
-            <img src='/loading.gif' alt='' className='w-[50vw] md:w-[25vw] content-center animate-pulse'/>
+            <img src='/src/assets/loading.gif' alt='' className='w-[50vw] md:w-[25vw] content-center animate-pulse'/>
         </div>
     )
 }

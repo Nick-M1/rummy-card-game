@@ -24,7 +24,7 @@ export default function SigninPage() {
                 <div>
                     <img
                         className="mx-auto h-24 w-auto"
-                        src="/brand-logo.png"
+                        src="/src/assets/brand-logo.png"
                         alt="Website logo"
                     />
                     <h2 className="mt-6 text-center text-3xl font-bold text-gray-200">

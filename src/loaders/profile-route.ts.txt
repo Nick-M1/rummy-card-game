@@ -1,0 +1,17 @@
+import {doc, getDoc} from "@firebase/firestore";
+import {db} from "../firebase";
+import {useUser} from "../layout/LayoutMain";
+import {User} from "firebase/auth";
+
+export type LoaderOutputType = {
+    user: User
+    results: UserDBType
+}
+
+export async function profileLoader() {
+    const { user } = useUser()
+
+    const response = await getDoc(doc(db, "users", user.uid))
+    const results = response.data() as UserDBType
+    return { user, results }
+}

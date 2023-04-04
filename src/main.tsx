@@ -18,10 +18,10 @@ const router = createBrowserRouter(
             <Route path='/signin' lazy={() => import("./routes/SigninRoute")}/>
 
             <Route element={<LayoutMain/>} errorElement={<ErrorPage/>}>
-                <Route index lazy={() => import("./routes/HomePage")}/>
+                <Route index lazy={() => import("./routes/HomeRoute")}/>
                 <Route path='/profile' lazy={() => import("./routes/ProfileRoute")}/>
 
-                <Route path='/:gameroomId' lazy={() => import("./routes/GameroomPage")}/>
+                <Route path='/:gameroomId' lazy={() => import("./routes/GameroomRoute")}/>
                 <Route path='/:gameroomId/leaderboard' lazy={() => import("./routes/LeaderboardRoute")} loader={leaderboardLoader}/>
             </Route>
         </Route>
