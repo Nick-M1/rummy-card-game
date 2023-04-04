@@ -22,7 +22,7 @@ export default function LayoutMain() {
     return (
         <div className='w-screen h-screen bg-neutral-800 text-gray-300 py-2'>
             <div className="flex items-center space-x-2 w-full py-2 px-2 md:px-4">
-                <img src="/src/assets/brand-logo.png" alt="logo" className="w-8"/>
+                <img src="/brand-logo.png" alt="logo" className="w-8"/>
                 <h1 className="flex-grow text-xl md:text-2xl font-semibold">Rummy Card Game</h1>
 
                 <h1 className="text-right">Welcome { user.displayName }</h1>
