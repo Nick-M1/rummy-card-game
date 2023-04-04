@@ -1,7 +1,5 @@
-import HeaderComponent from "./HeaderComponent";
-import UserprofileDropdown from "../components/authentication/UserprofileDropdown";
 import {User} from "firebase/auth";
-import MenuLayout from "./MenuLayout";
+import MenuLayout from "../layout/MenuLayout";
 import {Link} from "react-router-dom";
 
 type Props = {

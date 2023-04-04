@@ -7,20 +7,22 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import './index.css'
-import ErrorPage from "./layout/ErrorPage";
+import ErrorPage from "./pages/ErrorPage";
 import {leaderboardLoader} from "./loaders/leaderboard-route";
-import BlankPage from "./layout/BlankPage";
+import LayoutMain from "./layout/LayoutMain";
 
 
 const router = createBrowserRouter(
     createRoutesFromElements(
+        <Route>
+            <Route path='/signin' lazy={() => import("./routes/SigninRoute")}/>
 
-        <Route element={<BlankPage/>} errorElement={<ErrorPage/>}>
-            <Route index lazy={() => import("./routes/HomePage")}/>
-            <Route path='/:gameroomId' lazy={() => import("./routes/GameroomPage")}/>
-            <Route path='/:gameroomId/leaderboard' lazy={() => import("./routes/LeaderboardRoute")} loader={leaderboardLoader}/>
+            <Route element={<LayoutMain/>} errorElement={<ErrorPage/>}>
+                <Route index lazy={() => import("./routes/HomePage")}/>
+                <Route path='/:gameroomId' lazy={() => import("./routes/GameroomPage")}/>
+                <Route path='/:gameroomId/leaderboard' lazy={() => import("./routes/LeaderboardRoute")} loader={leaderboardLoader}/>
+            </Route>
         </Route>
-
     )
 )
 

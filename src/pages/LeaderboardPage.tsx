@@ -1,8 +1,6 @@
 import {User} from "firebase/auth";
-import HeaderComponent from "../../layout/HeaderComponent";
-import UserprofileDropdown from "../authentication/UserprofileDropdown";
 import {deleteDoc, doc} from "@firebase/firestore";
-import {db} from "../../firebase";
+import {db} from "../firebase";
 import {useNavigate} from "react-router-dom";
 
 type Props = {
@@ -29,10 +27,7 @@ export default function LeaderboardPage({ user, gameroomId, resultsData }: Props
     const numberOfRounds = Math.max(resultsData.rounds[user.uid].length, MIN_NUMBER_OF_ROUNDS)
 
     return (
-        <div className='w-screen h-screen bg-neutral-800 text-gray-300 px-2'>
-            <HeaderComponent displaynameText={`Welcome ${user.displayName}`}>
-                <UserprofileDropdown user={user}/>
-            </HeaderComponent>
+        <div className='text-gray-300 px-1'>
             <div className='border-b border-neutral-700 w-full py-1'/>
 
             <div className='py-8 md:mx-8 px-2 flex justify-between'>
@@ -68,7 +63,7 @@ export default function LeaderboardPage({ user, gameroomId, resultsData }: Props
                             const playerScoresDisplay = playerScores.length >= numberOfRounds ? playerScores : [...playerScores, ...Array(numberOfRounds - playerScores.length).fill('-')]
 
                             return (
-                                <tr key={playerId} className={`group border-b border-gray-800 smooth-transition ${playerId == user.uid && 'bg-blue-700/10'}`}>
+                                <tr key={playerId} className={`group border-b border-gray-800 smooth-transition ${playerId == user.uid && 'bg-white/10'}`}>
                                     <th scope="row"  className="flex items-center px-6 py-4 text-gray-300 font-semibold whitespace-nowrap">
                                         <img src={playerInfo.displayImage} alt='student profile' className='w-10 h-10 rounded-full shadow-sm mr-3'/>
                                         { playerInfo.displayName }

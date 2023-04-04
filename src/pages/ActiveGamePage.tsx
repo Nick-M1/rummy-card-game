@@ -1,20 +1,17 @@
-import {ALL_CARDS} from "../../utils/all-cards";
-import Card from "./Card";
+import {ALL_CARDS} from "../utils/all-cards";
+import Card from "../components/gameroom/Card";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import shuffleArray from "../../utils/shuffle-array";
-import {db} from "../../firebase";
+import shuffleArray from "../utils/shuffle-array";
+import {db} from "../firebase";
 import { onSnapshot, query, collection, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, doc, increment } from "@firebase/firestore"
 import {User} from "firebase/auth";
-import {useLocation, useParams} from "react-router-dom";
-import PlayerHand from "./PlayerHand";
+import PlayerHand from "../components/gameroom/PlayerHand";
 import {BeatLoader} from "react-spinners";
-import CompletedTriplesModal from "./CompletedTriplesModal";
+import CompletedTriplesModal from "../components/gameroom/CompletedTriplesModal";
 import toast from "react-hot-toast";
-import {toastOptionsCustom} from "../../utils/toast-options-custom";
-import HeaderComponent from "../../layout/HeaderComponent";
-import StartGamePage from "../../layout/StartGamePage";
-import GameoverModal from "./GameoverModal";
-import LoadingPage from "../../layout/LoadingPage";
+import {toastOptionsCustom} from "../utils/toast-options-custom";
+import StartGamePage from "./StartGamePage";
+import GameoverModal from "../components/gameroom/GameoverModal";
 
 
 const STARTING_CARD_NUMBER = 10
@@ -33,7 +30,7 @@ type Props = {
 
 
 
-export default function MainGameComponent({ user, gameroomId }: Props) {
+export default function ActiveGamePage({ user, gameroomId }: Props) {
 
     const [selectorMode, setSelectorMode] = useState<SelectorModeEnum>(SelectorModeEnum.NONE)
     useEffect(() => {
@@ -322,10 +319,7 @@ export default function MainGameComponent({ user, gameroomId }: Props) {
 
     return (
         <>
-            <div className='px-2 bg-neutral-800 w-screen h-screen text-gray-300'>
-                <HeaderComponent displaynameText={`You are Player ${gamestate.playerInfo[user.uid].index}`}>
-                    <img src={user.photoURL || '/unknown-profilepic.png'} alt="profile" className="w-8 rounded-full"/>
-                </HeaderComponent>
+            <div className='px-2 text-gray-300'>
 
                 <div className='flex justify-between space-x-5 py-2 border-b border-neutral-600'>
                     {Object.values(gamestate.playerInfo)
