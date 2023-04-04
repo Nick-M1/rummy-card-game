@@ -360,25 +360,36 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         }
     }
 
+    const getPlayertilesClassname = (numberOfPlayers: number) => {
+        switch (true) {
+            case numberOfPlayers < 3:   return ['', '']
+            case numberOfPlayers < 5:   return ['mx-auto sm:mx-0', 'hidden sm:block']
+            case numberOfPlayers < 7:   return ['mx-auto md:mx-0', 'hidden md:block']
+            case numberOfPlayers < 11:  return ['mx-auto xl:mx-0', 'hidden xl:block']
+            default:                    return ['mx-auto', 'hidden']
+        }
+    }
+
+    const playerTilesClassname = getPlayertilesClassname( gamestate.numberOfPlayers )
+
     return (
         <>
             <div className='px-2 text-gray-300'>
 
                 <div className='flex justify-between space-x-5 py-2 border-b border-neutral-600'>
-                    {Object.values(gamestate.playerInfo)
+                    { Object.values(gamestate.playerInfo)
                         .sort((p1, p2) => p1.index - p2.index)
                         .map(playerInfo => (
                             <div key={playerInfo.index}
                                  className={`flex space-x-2 flex-grow rounded-md p-3 m-0.5 shadow-sm text-sm outline smooth-transition ${currentRound === playerInfo.index ? 'outline-3 outline-teal-600 bg-white/20 text-gray-100' : 'outline-1 outline-gray-600 bg-white/10 text-gray-300'}`}>
-                                <img src={playerInfo.displayImage || undefined} alt='profile'
-                                     className='w-10 h-10 rounded-full'/>
-                                <p>
+                                <img src={playerInfo.displayImage || undefined} alt='profile' className={`w-10 h-10 rounded-full ${playerTilesClassname[0]}`}/>
+                                <p className={playerTilesClassname[1]}>
                                     <span className='italic'>Player {playerInfo.index}</span>
                                     <br/>
                                     {playerInfo.displayName}
                                 </p>
                             </div>
-                        ))}
+                    ))}
                 </div>
 
                 {currentRound === gamestate.playerInfo[user.uid].index
