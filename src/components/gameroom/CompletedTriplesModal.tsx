@@ -17,7 +17,7 @@ export default function CompletedTriplesModal({ modalOpen, setModalOpen, triples
         <ModalCustom title='Completed Triples' modalOpen={modalOpen} setModalOpen={setModalOpen}>
             <div>
                 { Object.entries(triplesCreated).map(([tripleId, tripleCollection]) => (
-                    <div key={tripleId} className='flex space-x-2 py-3 flex-shrink-0'>
+                    <div key={tripleId} className='flex space-x-2 py-3 flex-shrink-0 overflow-y-auto scrollbar'>
                         <>
                             { tripleCollection.map(card => (
                                 <div key={card.id}>

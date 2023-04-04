@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import {toastOptionsCustom} from "../utils/toast-options-custom";
 import StartGamePage from "./StartGamePage";
 import GameoverModal from "../components/gameroom/GameoverModal";
+import {smoothScrollWithHighlight} from "../utils/smooth-scroll";
 
 
 const STARTING_CARD_NUMBER = 10
@@ -27,8 +28,6 @@ type Props = {
     user: User
     gameroomId: string
 }
-
-
 
 export default function ActiveGamePage({ user, gameroomId }: Props) {
 
@@ -155,7 +154,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
 
 
     if (typeof gamestate == 'undefined')
-        return <StartGamePage text='Game not created yet' buttonText='Start Game' buttonHandler={startGameHandler}/>
+        return <StartGamePage text='Game not started yet' buttonText='Start Game' buttonHandler={startGameHandler}/>
 
 
     const joinGameHandler = async () => {
@@ -206,6 +205,9 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
             newCardsPile: arrayRemove(newCard),
             [`playerHands.${user.uid}`]: arrayUnion(newCard),
         })
+
+        smoothScrollWithHighlight(`hand-${newCard?.id}`, 'center')
+        toast(`You picked up "${newCard?.name.toUpperCase()}"`, { ...toastOptionsCustom, id: 'new-card' })
     }
 
     const takeCardFromDiscardPileHandler = async () => {
@@ -216,6 +218,9 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
             discardPile: arrayRemove(newCard),
             [`playerHands.${user.uid}`]: arrayUnion(newCard),
         })
+
+        smoothScrollWithHighlight(`hand-${newCard?.id}`, 'center')
+        toast(`You picked up "${newCard?.name.toUpperCase()}"`, { ...toastOptionsCustom, id: 'new-card' })
     }
 
     const addCardToDiscardPileHandler = async (card: Card) => {
@@ -347,11 +352,6 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 {currentRound === gamestate.playerInfo[user.uid].index
                     ? (
                         <>
-                            {/*<button onClick={startGameHandler}>*/}
-                            {/*    | START GAME |*/}
-                            {/*</button>*/}
-                            {/*<br/>*/}
-
                             <h3 className='pt-2'>Your turn...</h3>
 
                             {gamestate.cardPickedUpThisRound

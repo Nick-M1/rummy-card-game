@@ -1,4 +1,4 @@
-import {Navigate, Outlet, useOutletContext } from "react-router-dom";
+import {Link, Navigate, Outlet, useOutletContext} from "react-router-dom";
 import useAuthState from "../hooks/useAuthState";
 import {auth} from "../firebase";
 import LoadingPage from "../pages/LoadingPage";
@@ -22,10 +22,16 @@ export default function LayoutMain() {
     return (
         <div className='w-screen h-screen bg-neutral-800 text-gray-300 py-2'>
             <div className="flex items-center space-x-2 w-full py-2 px-2 md:px-4">
-                <img src="/brand-logo.png" alt="logo" className="w-8"/>
+                <Link to='/'>
+                    <img src="/brand-logo.png" alt="logo" className="w-8"/>
+                </Link>
                 <h1 className="flex-grow text-xl md:text-2xl font-semibold">Rummy Card Game</h1>
 
-                <h1 className="text-right">Welcome { user.displayName }</h1>
+                <h1 className="text-right sm:pr-2">
+                    Welcome
+                    <br/>
+                    <span className='font-semibold'>{ user.displayName }</span>
+                </h1>
                 <UserprofileDropdown user={user}/>
             </div>
 
