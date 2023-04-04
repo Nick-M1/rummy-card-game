@@ -27,7 +27,7 @@ export default function ProfilePage({ user }: Props) {
                 <p className='text-gray-400'>Click on a game below to rejoin or to view the leaderboard</p>
             </div>
 
-            <div className='bg-white/10 rounded-lg py-8 px-5 mx-6 min-h-[60vh]'>
+            <div className='bg-white/10 rounded-lg py-8 px-5 mx-6 min-h-[60vh] space-y-4'>
                 { userDB.games.map(gameroomId => (
                     <div key={gameroomId} className='flex flex-row items-center space-x-4'>
                         <Link to={`/${gameroomId}/leaderboard`} className='p-4 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/30 smooth-transition'>
