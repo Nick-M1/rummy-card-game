@@ -13,7 +13,7 @@ export default function MenuLayout({ children }: Props) {
             { children }
 
             <div className='px-6 md:px-32'>
-                <div className='bg-white/10 rounded-lg px-7 py-3 my-5 w-fit mx-auto text-gray-400 shadow-2xl break-keep overflow-y-scroll scrollbar'>
+                <div className='bg-white/10 rounded-lg px-7 py-3 my-5 w-fit mx-auto text-gray-400 shadow-2xl break-keep'>
                     <h3 className='text-center text-lg font-semibold text-gray-300 pb-2'>Game Instructions - Rummy</h3>
                     <ol className='list-inside list-decimal list-image-[url(assets/list-marker.svg)]'>
                         <li>Initially, each player receives 10 cards.</li>
