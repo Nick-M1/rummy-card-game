@@ -15,7 +15,7 @@ export default function DisplayGameroomid({ gameroomid, width, className }: Prop
     return (
         <h3 className={`mx-auto flex items-center ${className}`}>
             Gameroom ID:
-            <div className={`p-2 ml-2 bg-white/5 hover:bg-white/10 active:bg-white/20 text-sm text-gray-400 rounded-lg truncate select-all cursor-pointer ${ width }`} onClick={copyToClipboard}>{ gameroomid }</div>
+            <div className={`p-2 ml-2 bg-white/5 hover:bg-white/10 active:bg-white/20 text-sm text-gray-400 rounded-lg truncate select-all cursor-pointer smooth-transition ${ width }`} onClick={copyToClipboard}>{ gameroomid }</div>
         </h3>
     )
 }

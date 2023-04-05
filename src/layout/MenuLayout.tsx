@@ -6,14 +6,14 @@ type Props = {
 
 export default function MenuLayout({ children }: Props) {
     return (
-        <div className='flex flex-col px-2 text-gray-300 '>
+        <div className='flex flex-col px-2 text-gray-300 max-h-[70dvh] tall-md:max-h-[80dvh] tall-lg:max-h-[85dvh] overflow-y-auto scrollbar'>
             <div className='border-b border-neutral-700 w-full py-1'/>
             <img src='/homepage-icon.svg' alt='home-icon' className='h-[30vh] w-fit mx-auto py-3'/>
 
             { children }
 
             <div className='px-6 md:px-32'>
-                <div className='bg-white/10 rounded-lg px-7 py-3 my-5 w-fit mx-auto text-gray-400 shadow-2xl break-keep h-[25dvh] overflow-y-scroll scrollbar'>
+                <div className='bg-white/10 rounded-lg px-7 py-3 my-5 w-fit mx-auto text-gray-400 shadow-2xl break-keep overflow-y-scroll scrollbar'>
                     <h3 className='text-center text-lg font-semibold text-gray-300 pb-2'>Game Instructions - Rummy</h3>
                     <ol className='list-inside list-decimal list-image-[url(assets/list-marker.svg)]'>
                         <li>Initially, each player receives 10 cards.</li>
