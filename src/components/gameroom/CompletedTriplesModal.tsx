@@ -27,7 +27,7 @@ export default function CompletedTriplesModal({ modalOpen, setModalOpen, triples
                         { canAddToTriples &&
                             <div
                                 onClick={() => handler(tripleCollection)}
-                                className='bg-white/10 w-24 rounded-md flex items-center justify-center text-4xl pb-4 hover:bg-white/20 smooth-transition cursor-pointer'
+                                className='flex-shrink-0 bg-white/10 w-24 rounded-md flex items-center justify-center text-4xl pb-4 hover:bg-white/20 smooth-transition cursor-pointer'
                             >
                                 +
                             </div>

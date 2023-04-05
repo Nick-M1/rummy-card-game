@@ -20,7 +20,7 @@ export default function GameoverModal({ modalOpen, setModalOpen, gameroomId, isW
                 </Link>
 
                 <img src={isWinner ? '/gameover/winner.png' : '/gameover/loser.png'} alt='gameover' className='w-[40dvw] md:w-[30dvw] mx-auto'/>
-                <h3 className='mx-auto text-2xl'>
+                <h3 className='mx-auto text-xl md:text-2xl'>
                     { isWinner ? (
                         <>
                             🏆 Well done {' '}

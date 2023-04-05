@@ -64,14 +64,14 @@ export default function LeaderboardPage({ user, gameroomId, resultsData }: Props
 
                             return (
                                 <tr key={playerId} className='group border-b border-gray-800 smooth-transition'>
-                                    <th scope="row"  className={`flex items-center px-6 py-4 whitespace-nowrap ${playerId == user.uid ? 'text-white font-bold' : 'text-gray-300 font-semibold'}`}>
+                                    <th scope="row"  className={`flex items-center px-6 py-4 whitespace-nowrap mr-5 ${playerId == user.uid ? 'text-white font-bold' : 'text-gray-300 font-semibold'}`}>
                                         <img src={playerInfo.displayImage} alt='student profile' className='w-10 h-10 rounded-full shadow-sm mr-3'/>
                                         { playerInfo.displayName }
                                     </th>
 
                                     { playerScoresDisplay.map((scores, index) => (
                                         <td className="px-6 py-4 text-gray-300" key={index}>
-                                            {scores}
+                                            { scores }
                                         </td>
                                     ))}
 
