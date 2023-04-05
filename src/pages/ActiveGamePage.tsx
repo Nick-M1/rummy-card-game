@@ -468,7 +468,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 </button>
 
                 {/* DISCARD PILE */}
-                <div className='absolute right-2 bottom-[13.4rem] rounded-md border-l border-neutral-600 px-2 z-[2] bg-neutral-800'>
+                <div className='absolute right-2 bottom-[13.4rem] rounded-md border-l border-neutral-600 px-2 z-[2]'>
                     <h3 className='pb-1.5 text-sm'>Discard Pile</h3>
                     <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile'
                          className='h-32 flex-shrink-0'/>
