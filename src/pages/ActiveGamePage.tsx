@@ -397,7 +397,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
     return (
         <>
             <div className='px-2 text-gray-300'>
-                <DisplayGameroomid gameroomid={gameroomId} width='w-[30vw]' className='-mt-[1.2rem] -mb-1.5 scale-75 md:mt-0 md:mb-1 md:scale-100 justify-center'/>
+                <DisplayGameroomid gameroomid={gameroomId} width='w-[30vw]' className='-mt-4 -mb-1.5 scale-75 md:mt-0 md:mb-1 md:scale-100 justify-center'/>
 
                 <div className='flex justify-between space-x-5 py-2 border-b border-neutral-600'>
                     { Object.values(gamestate.playerInfo)
