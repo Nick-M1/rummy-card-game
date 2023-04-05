@@ -397,7 +397,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
     return (
         <>
             <div className='px-2 text-gray-300'>
-                <DisplayGameroomid gameroomid={gameroomId} width='w-[30vw] -mt-3 -ml-1 scale-90 md:mt-0 md:ml-2 md:scale-100'/>
+                <DisplayGameroomid gameroomid={gameroomId} width='w-[30vw]' className='-ml-[4.5rem] -mt-[1.2rem] -mb-1.5 scale-75 md:ml-1 md:mt-0 md:mb-1 md:scale-100'/>
 
                 <div className='flex justify-between space-x-5 py-2 border-b border-neutral-600'>
                     { Object.values(gamestate.playerInfo)
@@ -468,7 +468,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 </button>
 
                 {/* DISCARD PILE */}
-                <div className='absolute right-2 bottom-[13.4rem] rounded-md border-l border-neutral-600 px-2 z-[2]'>
+                <div className='absolute right-2 bottom-[13.4rem] rounded-md border-l border-neutral-600 pl-2.5 pr-0.5 py-0.5 md:py-1 z-[2]'>
                     <h3 className='pb-1.5 text-sm'>Discard Pile</h3>
                     <img src={gamestate.discardPile.at(-1)?.img || '/cards-back/red.svg'} alt='discard pile'
                          className='h-32 flex-shrink-0'/>
