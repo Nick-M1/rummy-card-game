@@ -1,6 +1,7 @@
 import {Dispatch, SetStateAction} from "react";
 import Card from "./Card";
 import ModalCustom from "../shared/ModalCustom";
+import {sortCardsFunction} from "../../utils/all-cards";
 
 type Props = {
     modalOpen: boolean
@@ -11,14 +12,16 @@ type Props = {
     handler: (cards: Card[]) => void
 }
 
-export default function CompletedTriplesModal({ modalOpen, setModalOpen, triplesCreated, canAddToTriples, handler }: Props) {
+export default function CreatedMatchsetsModal({ modalOpen, setModalOpen, triplesCreated, canAddToTriples, handler }: Props) {
 
     return (
-        <ModalCustom title='Completed Triples' modalOpen={modalOpen} setModalOpen={setModalOpen}>
+        <ModalCustom title='Created Match-Sets' modalOpen={modalOpen} setModalOpen={setModalOpen}>
             <div>
-                { Object.entries(triplesCreated).map(([tripleId, tripleCollection]) => (
+                { Object.entries(triplesCreated)
+                    .sort((a, b) => a[0].localeCompare(b[0]) )
+                    .map(([tripleId, tripleCollection]) => (
                     <div key={tripleId} className='flex space-x-2 py-3 overflow-x-auto scrollbar'>
-                        { tripleCollection.map(card => (
+                        { tripleCollection.sort(sortCardsFunction).map(card => (
                             <div key={card.id} className='flex-shrink-0'>
                                 <img src={card.img || undefined} alt='card' className='w-24'/>
                             </div>

@@ -1,4 +1,4 @@
-import {ALL_CARDS} from "../utils/all-cards";
+import {ALL_CARDS, sortCardsFunction} from "../utils/all-cards";
 import Card from "../components/gameroom/Card";
 import {useEffect, useState} from "react";
 import shuffleArray from "../utils/shuffle-array";
@@ -7,7 +7,7 @@ import { onSnapshot, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, doc, in
 import {User} from "firebase/auth";
 import PlayerHand from "../components/gameroom/PlayerHand";
 import {BeatLoader} from "react-spinners";
-import CompletedTriplesModal from "../components/gameroom/CompletedTriplesModal";
+import CreatedMatchsetsModal from "../components/gameroom/CreatedMatchsetsModal";
 import toast from "react-hot-toast";
 import {toastOptionsCustom} from "../utils/toast-options-custom";
 import StartGamePage from "./StartGamePage";
@@ -42,11 +42,12 @@ const toastWithCards = (id: string, text: string, backgroundColor: string, image
 
 
 const STARTING_CARD_NUMBER = 10
+const TOAST_ID_GAMEEVENT = 'game-event'
 
 enum SelectorModeEnum {
     NONE,
-    TRIPLE_SELECTOR,
-    COMPLETE_OTHER_TRIPLE,
+    MATCHSET_CREATING,
+    COMPLETE_OTHER_MATCHSET,
     DISCARD_CARD
 }
 
@@ -58,11 +59,10 @@ type Props = {
 export default function ActiveGamePage({ user, gameroomId }: Props) {
 
     const [selectorMode, setSelectorMode] = useState<SelectorModeEnum>(SelectorModeEnum.NONE)
+    const [selectMatchsetList, setSelectMatchsetList] = useState<Card[]>([])
 
-    const [selectTripleList, setSelectTripleList] = useState<Card[]>([])
-
-    const [completedTriplesModalOpen, setCompletedTriplesModalOpen] = useState(false)
-    const [completedTripleHolder, setCompletedTripleHolder] = useState<Card[]>([])
+    const [completedMatchsetsModalOpen, setCompletedMatchsetsModalOpen] = useState(false)
+    const [completedMatchsetsHolder, setCompletedMatchsetsHolder] = useState<Card[]>([])
 
     const [gamestate, setGamestate] = useState<GameDBType>()
     const [gameoverPopup, setGameoverPopup] = useState(false)
@@ -70,22 +70,22 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
     useEffect(() => {
         switch (selectorMode) {
             case SelectorModeEnum.NONE:
-                toast.dismiss('selector-mode')
+                // toast.dismiss(TOAST_ID_GAMEEVENT)
                 break;
 
-            case SelectorModeEnum.TRIPLE_SELECTOR:
-                toastWithCards('selector-mode', 'Select at least 3 cards from your hand and test for a triple', 'bg-cyan-200', selectTripleList.map(c => c.img), checkTriples(selectTripleList), () => removeTriple())
+            case SelectorModeEnum.MATCHSET_CREATING:
+                toastWithCards(TOAST_ID_GAMEEVENT, 'Select at least 3 cards from your hand and test for a match-set', 'bg-cyan-200', selectMatchsetList.map(c => c.img), checkTriples(selectMatchsetList), () => removeTriple())
                 break;
 
-            case SelectorModeEnum.COMPLETE_OTHER_TRIPLE:
-                toastWithCards('selector-mode', 'Select a card from your hand and attempt to add to the already created triple', 'bg-pink-200', completedTripleHolder.map(c => c.img), checkTriples(selectTripleList), () => {})
+            case SelectorModeEnum.COMPLETE_OTHER_MATCHSET:
+                toastWithCards(TOAST_ID_GAMEEVENT, 'Select a card from your hand and attempt to add to this already created match-set', 'bg-pink-200', completedMatchsetsHolder.map(c => c.img), checkTriples(selectMatchsetList), () => {})
                 break;
 
             case SelectorModeEnum.DISCARD_CARD:
-                toast('Select a card from your hand to discard (this will end your turn)', toastOptionsCustom({ icon: '🤷‍♀️', id: 'selector-mode', duration: 100_000 }, tailwindColors.yellow["200"]))
+                toast('Select a card from your hand to discard (this will end your turn)', toastOptionsCustom({ icon: '🤷‍♀️', id: TOAST_ID_GAMEEVENT, duration: 100_000 }, tailwindColors.yellow["200"]))
                 break;
         }
-    }, [selectorMode, selectTripleList, completedTripleHolder])
+    }, [selectorMode, selectMatchsetList, completedMatchsetsHolder])
 
     useEffect(() => {
         const chatroomUnsub = onSnapshot(
@@ -239,7 +239,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         })
 
         smoothScrollWithHighlight(`hand-${newCard?.id}`, 'center')
-        toast(`You picked up "${newCard?.name.toUpperCase()}"`, toastOptionsCustom({ icon: '⬆️', id: 'new-card', duration: 100_000 }, tailwindColors.orange["300"]))
+        toast(`You picked up "${newCard?.name.toUpperCase()}"`, toastOptionsCustom({ icon: '⬆️', id: TOAST_ID_GAMEEVENT }, tailwindColors.orange["300"]))
     }
 
     const takeCardFromNewPileHandler = async () => {
@@ -257,7 +257,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         })
 
         smoothScrollWithHighlight(`hand-${newCard?.id}`, 'center')
-        toast(`You picked up "${newCard?.name.toUpperCase()}"`, toastOptionsCustom({ icon: '⬆️', id: 'new-card', duration: 100_000 }, tailwindColors.lime["300"]))
+        toast(`You picked up "${newCard?.name.toUpperCase()}"`, toastOptionsCustom({ icon: '⬆️', id: TOAST_ID_GAMEEVENT }, tailwindColors.lime["300"]))
     }
 
     const addCardToDiscardPileHandler = async (card: Card) => {
@@ -268,9 +268,9 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
             discardPile: arrayUnion(card),
         })
 
-        toast(`You discarded "${card.name.toUpperCase()}"`, toastOptionsCustom({ icon: '⬇️', id: 'new-card', duration: 100_000 }, tailwindColors.yellow["200"]))
+        toast(`You discarded "${card.name.toUpperCase()}"`, toastOptionsCustom({ icon: '⬇️', id: TOAST_ID_GAMEEVENT }, tailwindColors.yellow["200"]))
         setSelectorMode(SelectorModeEnum.NONE)
-        setSelectTripleList([])
+        setSelectMatchsetList([])
     }
 
     const checkTriplesBySameSuite = (cards: Card[], suite: string, numberOfJokers: number): boolean => {
@@ -305,7 +305,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         if (cards.length < 3)
             return false
 
-        const sortedCards = cards.sort((c1, c2) => c1.ranking - c2.ranking)
+        const sortedCards = cards.sort(sortCardsFunction)
         const firstSuite = cards[0].suite
         const firstRank = cards[0].ranking
 
@@ -316,26 +316,26 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
     }
 
     const removeTriple = async () => {
-        if (!checkTriples(selectTripleList))
+        if (!checkTriples(selectMatchsetList))
             return
 
-        for (const card of selectTripleList) {
+        for (const card of selectMatchsetList) {
             await updateDoc(doc(db, "games", gameroomId), {
                 [`playerHands.${user.uid}`]: arrayRemove(card),
                 [`playerHasTriple.${user.uid}`]: true,
             })
         }
 
-        const sortedTriple = selectTripleList.sort((a, b) => a.ranking - b.ranking)
+        const sortedTriple = selectMatchsetList.sort(sortCardsFunction)
         await updateDoc(doc(db, "games", gameroomId), {
             [`triplesCreated.${sortedTriple[0].id}`]: sortedTriple
         })
 
-        setSelectTripleList([])
+        setSelectMatchsetList([])
     }
 
     const selectTripleHandler = (card: Card) => {
-        setSelectTripleList(prevState => {
+        setSelectMatchsetList(prevState => {
             const indexFound = prevState.map(c => c.id).indexOf(card.id)
 
             if (indexFound == -1)
@@ -348,10 +348,11 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
     }
 
     const completeAlreadyCreatedTriple = async (card: Card) => {
-        if (!checkTriples([...completedTripleHolder, card]))
+        if (!checkTriples([...completedMatchsetsHolder, card])) {
+            toast.error(`${card.name.toUpperCase()} doesn't match with match-set`, { id: 'no-match' })
             return
-
-        toast(`You added "${card.name.toUpperCase()}" to the triple`, toastOptionsCustom({ icon: '⬇️', id: 'new-card', duration: 100_000 }, tailwindColors.pink["200"]))
+        }
+        toast(`You added "${card.name.toUpperCase()}" to the match-set`, toastOptionsCustom({ icon: '⬇️', id: TOAST_ID_GAMEEVENT }, tailwindColors.pink["200"]))
         setSelectorMode(SelectorModeEnum.NONE)
 
         await updateDoc(doc(db, "games", gameroomId), {
@@ -359,7 +360,7 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
         })
 
         await updateDoc(doc(db, "games", gameroomId), {
-            [`triplesCreated.${completedTripleHolder[0].id}`]: arrayUnion(card)
+            [`triplesCreated.${completedMatchsetsHolder[0].id}`]: arrayUnion(card)
         })
     }
 
@@ -368,11 +369,11 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
             case SelectorModeEnum.NONE:
                 break
 
-            case SelectorModeEnum.TRIPLE_SELECTOR:
+            case SelectorModeEnum.MATCHSET_CREATING:
                 selectTripleHandler(card)
                 break;
 
-            case SelectorModeEnum.COMPLETE_OTHER_TRIPLE:
+            case SelectorModeEnum.COMPLETE_OTHER_MATCHSET:
                 completeAlreadyCreatedTriple(card)
                 break;
 
@@ -424,14 +425,14 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                                 ? (
                                     <>
                                         <div className='px-1 pt-2 pb-4 grid grid-cols-3 gap-5 border-b border-neutral-600'>
-                                            <button onClick={() => setSelectorMode(SelectorModeEnum.TRIPLE_SELECTOR)}
-                                                    className={`button-cyan lg:py-5 ${selectorMode == SelectorModeEnum.TRIPLE_SELECTOR && '-translate-y-4 shadow-blue-500/50'}`}>
+                                            <button onClick={() => setSelectorMode(SelectorModeEnum.MATCHSET_CREATING)}
+                                                    className={`button-cyan lg:py-5 ${selectorMode == SelectorModeEnum.MATCHSET_CREATING && '-translate-y-4 shadow-blue-500/50'}`}>
                                                 Select a triple
                                             </button>
-                                            <button onClick={() => { setCompletedTriplesModalOpen(true); setSelectorMode(SelectorModeEnum.NONE) }}
-                                                    className={`button-pink lg:py-5 ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_TRIPLE && '-translate-y-4'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
+                                            <button onClick={() => { setCompletedMatchsetsModalOpen(true); toast.dismiss(TOAST_ID_GAMEEVENT) }}
+                                                    className={`button-pink lg:py-5 ${selectorMode == SelectorModeEnum.COMPLETE_OTHER_MATCHSET && '-translate-y-4'} ${!hasATripleAlready && 'cursor-not-allowed'}`}
                                                     disabled={!hasATripleAlready}>
-                                                Complete an already completed triple
+                                                Add to an already created match-set
                                             </button>
                                             <button onClick={() => setSelectorMode(SelectorModeEnum.DISCARD_CARD)}
                                                     className={`button-yellow lg:py-5 ${selectorMode == SelectorModeEnum.DISCARD_CARD && '-translate-y-4 shadow-orange-500/50'}`}>
@@ -463,8 +464,8 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 }
 
                 {/* Triples Modal button */}
-                <button onClick={() => setCompletedTriplesModalOpen(true)} className={`absolute bottom-56 left-3 button-white ${Object.values(gamestate.triplesCreated).length == 0 && 'hidden'}`}>
-                    View Completed Triples
+                <button onClick={() => {setCompletedMatchsetsModalOpen(true); toast.dismiss(TOAST_ID_GAMEEVENT)}} className={`absolute bottom-56 left-3 button-white ${Object.values(gamestate.triplesCreated).length == 0 && 'hidden'}`}>
+                    View Created Match-Sets
                 </button>
 
                 {/* DISCARD PILE */}
@@ -478,23 +479,23 @@ export default function ActiveGamePage({ user, gameroomId }: Props) {
                 <div className='fixed bottom-0 border-t border-neutral-600 w-full pr-2 pb-1'>
                     <h3 className='pt-1'>Your hand</h3>
                     <PlayerHand
-                        cards={gamestate?.playerHands[user.uid].sort((c1, c2) => c1.ranking - c2.ranking)}
-                        selectTripleListIds={selectTripleList.map(c => c.id)}
+                        cards={gamestate?.playerHands[user.uid].sort(sortCardsFunction)}
+                        selectTripleListIds={selectMatchsetList.map(c => c.id)}
                         cardOnclickHandler={cardOnclickHandler}
                     />
                 </div>
             </div>
 
-            <CompletedTriplesModal
-                modalOpen={completedTriplesModalOpen}
-                setModalOpen={setCompletedTriplesModalOpen}
+            <CreatedMatchsetsModal
+                modalOpen={completedMatchsetsModalOpen}
+                setModalOpen={setCompletedMatchsetsModalOpen}
                 triplesCreated={gamestate.triplesCreated}
 
                 canAddToTriples={currentRound === gamestate.playerInfo[user.uid].index && gamestate.cardPickedUpThisRound && hasATripleAlready}
                 handler={(cards: Card[]) => {
-                    setCompletedTripleHolder(cards)
-                    setSelectorMode(SelectorModeEnum.COMPLETE_OTHER_TRIPLE)
-                    setCompletedTriplesModalOpen(false)
+                    setCompletedMatchsetsHolder(cards)
+                    setSelectorMode(SelectorModeEnum.COMPLETE_OTHER_MATCHSET)
+                    setCompletedMatchsetsModalOpen(false)
                 }}
             />
 
