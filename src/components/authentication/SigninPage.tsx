@@ -1,5 +1,5 @@
 import { LockClosedIcon } from '@heroicons/react/20/solid'
-import {BsFacebook, BsGoogle} from "react-icons/bs";
+import {BsFacebook, BsGoogle, BsMicrosoft} from "react-icons/bs";
 import {signInWithPopup, AuthProvider} from "firebase/auth";
 import {auth, db, microsoftProvider, googleProvider} from "../../firebase";
 import {doc, setDoc} from "firebase/firestore";
@@ -114,7 +114,7 @@ export default function SigninPage() {
                             <span className="sr-only">Continue with</span> Google
                         </button>
                         <button onClick={() => signInWithProvider(microsoftProvider)} className="bg-black hover:bg-gray-700 flex justify-center btn-bouncy btn-primary px-0 py-2 hover:ring-slate-700 focus:ring-slate-700 border border-gray-700">
-                            <BsFacebook size={23} className="mr-2" />
+                            <BsMicrosoft size={23} className="mr-2" />
                             <span className="sr-only">Continue with</span> Microsoft
                         </button>
                     </div>
