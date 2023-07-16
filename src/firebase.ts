@@ -1,8 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider  } from "firebase/auth";
-import firebase from "firebase/compat";
-import OAuthProvider = firebase.auth.OAuthProvider;
+import { getAuth, GoogleAuthProvider, OAuthProvider  } from "firebase/auth";
 
 
 const firebaseConfig = {
